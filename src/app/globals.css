@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+}
+
+
+@theme inline {
+  --animate-hero-fade: hero-fade 36s linear infinite;
+
+  @keyframes hero-fade {
+    0% {
+      opacity: 0;
+    }
+    4.1667%,
+    20.8333% {
+      opacity: 1;
+    }
+    25%,
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+/* Keep the free OpenStreetMap tiles in step with the black and white theme. */
+.leaflet-tile-pane {
+  filter: grayscale(1) contrast(1.05);
+}
+
+.leaflet-tooltip {
+  border: 0;
+  border-radius: 9999px;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+}

@@ -1,0 +1,56 @@
+/*
+  Single source of truth for colors and design tokens.
+  Edit values here and the whole site restyles. Colors are hex on purpose:
+  the Open Graph image renderer reads them from this file and cannot parse oklch().
+  Brand direction: light white surfaces, black text and black buttons.
+*/
+
+:root {
+  --background: #fafafa;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #efefef;
+  --secondary-foreground: #000000;
+  --accent: #262626;
+  --accent-foreground: #ffffff;
+  --muted: #f2f2f2;
+  --muted-foreground: #404040;
+  --border: #d4d4d4;
+
+  --radius: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgb(20 17 9 / 0.1);
+  --shadow-md: 0 8px 24px -8px rgb(20 17 9 / 0.22);
+  --shadow-lg: 0 24px 56px -16px rgb(20 17 9 / 0.35);
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --radius-xl: calc(var(--radius) + 0.75rem);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-baskerville), ui-serif, Georgia, serif;
+}
