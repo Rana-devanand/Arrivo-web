@@ -1,6 +1,6 @@
 import type { Fact } from "@/config/content";
 import { Container } from "@/components/ui/Container";
-import { Icon } from "@/components/ui/Icon";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 
 export function FactStrip({ label, facts }: { label: string; facts: readonly Fact[] }) {
   return (
@@ -13,7 +13,7 @@ export function FactStrip({ label, facts }: { label: string; facts: readonly Fac
               className="group relative flex items-start gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6 text-card-foreground transition-shadow hover:shadow-md"
             >
               <span className="relative inline-flex size-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                <Icon name={fact.icon} className="size-8" />
+                <AnimatedIcon name={fact.icon} className="size-8" loop />
                 <span className="absolute -inset-1.5 rounded-[1.25rem] border border-border" aria-hidden="true" />
               </span>
               <div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { facts, features, neverList, screens, toolsList } from "@/config/content";
+import { facts, features, neverList, toolsList } from "@/config/content";
 import { siteConfig } from "@/config/site";
 import { softwareApplicationJsonLd } from "@/lib/json-ld";
 import { buildMetadata } from "@/lib/seo";
@@ -14,7 +14,6 @@ import { FinalCta } from "@/components/sections/FinalCta";
 import { Hero } from "@/components/sections/Hero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { LiveRoute } from "@/components/sections/LiveRoute";
-import { Showcase } from "@/components/sections/Showcase";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Worrying } from "@/components/sections/Worrying";
 
@@ -41,7 +40,6 @@ export default function Home() {
           </Button>
         </div>
       </Section>
-      <Showcase title="Inside the app" intro="Real screens from Arrivo, built to stay calm even when you are in a hurry." screens={screens} />
       <FeatureRow
         id="safety"
         icon="shield"

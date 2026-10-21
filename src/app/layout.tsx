@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Libre_Baskerville, Plus_Jakarta_Sans } from "next/font/google";
+import { Anton, Libre_Baskerville, Plus_Jakarta_Sans } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { organizationJsonLd } from "@/lib/json-ld";
 import { Footer } from "@/components/layout/Footer";
@@ -21,6 +21,13 @@ const baskerville = Libre_Baskerville({
   display: "swap",
 });
 
+const anton = Anton({
+  variable: "--font-anton",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   applicationName: siteConfig.name,
@@ -39,7 +46,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${baskerville.variable} antialiased`}>
+    <html lang="en" className={`${jakarta.variable} ${baskerville.variable} ${anton.variable} antialiased`}>
       <body className="flex min-h-screen flex-col">
         <a
           href="#main"

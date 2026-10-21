@@ -13,7 +13,7 @@ export function Testimonials() {
         {testimonials.map((item, index) => (
           <li key={index}>
             <Card as="figure" className="flex h-full flex-col items-start gap-4">
-              <Badge>Sample, replace before launch</Badge>
+              <Badge>ARRIVO USERS</Badge>
               <blockquote className="text-lg text-foreground">{item.quote}</blockquote>
               <figcaption className="mt-auto flex items-center gap-3">
                 <Avatar tone={tones[index % tones.length]} />

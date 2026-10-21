@@ -8,9 +8,9 @@ const featured = faqs.filter((faq) => faq.featured);
 
 export function Faq() {
   return (
-    <Section id="faq" title="Frequently asked questions" tone="muted">
+    <Section id="faq" title="Frequently asked questions">
       <JsonLd data={faqJsonLd(featured)} />
-      <FaqList items={featured} />
+      <FaqList items={featured} openFirst />
     </Section>
   );
 }

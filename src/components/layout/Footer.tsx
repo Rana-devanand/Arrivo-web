@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { siteConfig, type NavItem } from "@/config/site";
 import { Container } from "@/components/ui/Container";
+import { Wordmark } from "@/components/ui/Wordmark";
 
 const linkClasses = "inline-flex min-h-11 items-center text-base text-muted-foreground hover:text-foreground";
 
@@ -26,7 +27,9 @@ export function Footer() {
     <footer className="border-t border-border bg-muted py-12">
       <Container className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-1">
-          <p className="text-xl font-bold">{siteConfig.name}</p>
+          <p className="text-3xl">
+            <Wordmark />
+          </p>
           <p className="mt-2 max-w-xs text-muted-foreground">{siteConfig.tagline}</p>
         </div>
         <LinkColumn label="Product" items={siteConfig.footer.product} />
@@ -50,9 +53,17 @@ export function Footer() {
         </nav>
       </Container>
       <Container className="mt-8 border-t border-border pt-6">
-        <p className="text-sm text-muted-foreground">
-          &copy; {siteConfig.copyrightYear} {siteConfig.name}. All rights reserved.
-        </p>
+        <div className="flex flex-col justify-between gap-2 text-sm text-muted-foreground sm:flex-row">
+          <p>
+            &copy; {siteConfig.copyrightYear} {siteConfig.name}. All rights reserved.
+          </p>
+          <p>
+            Animated icons by{" "}
+            <a href="https://lordicon.com/" className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">
+              Lordicon
+            </a>
+          </p>
+        </div>
       </Container>
       {/* No need now  */}
       {/* <ThemePalette /> */}  

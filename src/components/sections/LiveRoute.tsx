@@ -199,11 +199,12 @@ export function LiveRoute() {
         if (cancelled) return;
         lib.current = L;
         const leafletMap = L.map(target, {
-          zoomControl: true,
+          zoomControl: false,
           scrollWheelZoom: false,
           dragging: !L.Browser.mobile,
           worldCopyJump: false,
         }).setView([22.5, 79], 5);
+        L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
         L.tileLayer(TILES, {
           maxZoom: 19,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -228,13 +229,13 @@ export function LiveRoute() {
   return (
     <section ref={section} id="live-route" aria-labelledby="live-route-title" className="relative isolate h-[92svh] min-h-[620px] bg-muted">
       <div ref={container} role="application" aria-label="Map showing a sample journey" className="absolute inset-0 z-0" />
-      <div className="pointer-events-none absolute inset-0 z-[1100] flex flex-col justify-between p-4 sm:p-8">
-        <div className="pointer-events-auto max-w-md rounded-2xl bg-card/95 p-5 text-card-foreground shadow-lg backdrop-blur sm:p-6">
-          <Heading level={2} id="live-route-title" className="text-xl sm:text-3xl">
+      <div className="pointer-events-none absolute inset-0 z-[1100] flex flex-col justify-between p-3 sm:p-5">
+        <div className="pointer-events-auto max-w-[17rem] rounded-xl bg-card/95 px-4 py-3 text-card-foreground shadow-md backdrop-blur sm:max-w-sm">
+          <Heading level={2} id="live-route-title" className="text-base leading-snug sm:text-xl">
             See a journey the way your contacts do
           </Heading>
-          <p className="mt-2 hidden text-muted-foreground sm:block">
-            A live map, the route and an arrival time. This sample picks two places at random on a free OpenStreetMap map.
+          <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
+            Live map, route and arrival time. A random sample on free OpenStreetMap.
           </p>
         </div>
         <div className="pointer-events-auto flex max-w-xl flex-col gap-4 rounded-2xl bg-primary p-5 text-primary-foreground shadow-lg sm:p-6">

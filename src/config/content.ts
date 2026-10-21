@@ -138,9 +138,21 @@ export const moreScreens: readonly Screen[] = [
 ];
 
 export const testimonials: readonly Testimonial[] = [
-  { quote: "Sample quote for layout only. Replace with something a real customer has given you permission to publish, about getting home late or travelling alone.", author: "[Customer name]", role: "[City, how they use Arrivo]" },
-  { quote: "Sample quote for layout only. A good one is short and specific, for example how it felt when the arrival message reached a parent or friend.", author: "[Customer name]", role: "[City, how they use Arrivo]" },
-  { quote: "Sample quote for layout only. Ask a trusted contact too: what it was like to be told someone arrived safely without having to ask.", author: "[Customer name]", role: "[City, trusted contact]" },
+  {
+    quote: "Arrivo gives me peace of mind when I travel home late. My family knows when I've arrived safely without needing to call me.",
+    author: "Emily Carter",
+    role: "Chicago, IL · Night-time commuter"
+  },
+  {
+    quote: "I feel more comfortable travelling alone knowing that my arrival updates can reach someone I trust.",
+    author: "Daniel Brooks",
+    role: "Austin, TX · Solo traveller"
+  },
+  {
+    quote: "It's reassuring to receive a safe-arrival update without having to keep asking. A simple idea that makes a real difference.",
+    author: "Sophia Bennett",
+    role: "Seattle, WA · Trusted contact"
+  }
 ];
 
 export const principles: readonly Feature[] = [

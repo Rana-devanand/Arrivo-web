@@ -1,7 +1,7 @@
 import type { Feature } from "@/config/content";
 import { Card } from "./Card";
 import { Heading } from "./Heading";
-import { Icon } from "./Icon";
+import { AnimatedIcon } from "./AnimatedIcon";
 
 type FeatureGridProps = {
   items: readonly Feature[];
@@ -18,10 +18,10 @@ export function FeatureGrid({ items, columns = 3 }: FeatureGridProps) {
   return (
     <ul className={`grid gap-6 ${columnClasses[columns]}`}>
       {items.map((item) => (
-        <li key={item.title}>
+        <li key={item.title} className="group">
           <Card as="article" className="h-full">
             <span className="mb-4 inline-flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Icon name={item.icon} className="size-6" />
+              <AnimatedIcon name={item.icon} className="size-6" />
             </span>
             <Heading level={3}>{item.title}</Heading>
             <p className="mt-2 text-muted-foreground">{item.text}</p>

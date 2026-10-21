@@ -49,3 +49,361 @@
   font-weight: 600;
   padding: 0.25rem 0.75rem;
 }
+
+/* Animated icons (AnimatedIcon). Parts rest in their normal pose and move while --ai-state is running. */
+.ai {
+  --ai-state: paused;
+}
+
+.ai[data-loop="true"],
+.group:hover .ai,
+.group:focus-within .ai {
+  --ai-state: running;
+}
+
+.ai [class*="ai-"] {
+  animation-play-state: var(--ai-state);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai [class*="ai-"] {
+    animation: none !important;
+  }
+}
+
+.ai-swing {
+  transform-origin: 12px 3px;
+  animation: ai-swing 1.8s ease-in-out infinite;
+}
+.ai-clapper {
+  animation: ai-clapper 1.8s ease-in-out infinite;
+}
+.ai-hop {
+  animation: ai-hop 1.6s ease-in-out infinite;
+}
+.ai-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-ping 1.6s ease-out infinite;
+}
+.ai-nudge {
+  animation: ai-nudge 1.6s ease-in-out infinite;
+}
+.ai-dash {
+  stroke-dasharray: 3 4;
+  animation: ai-dash 1.2s linear infinite;
+}
+.ai-beat {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-beat 1.4s ease-in-out infinite;
+}
+.ai-wave {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: ai-wave 1.8s ease-in-out infinite;
+}
+.ai-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: ai-draw 2.4s ease-in-out infinite;
+}
+.ai-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-pulse 2.4s ease-in-out infinite;
+}
+.ai-hand-fast {
+  transform-origin: 12px 12px;
+  animation: ai-spin 3s linear infinite;
+}
+.ai-hand-slow {
+  transform-origin: 12px 12px;
+  animation: ai-spin 18s linear infinite;
+}
+.ai-rumble {
+  animation: ai-rumble 0.5s ease-in-out infinite;
+}
+.ai-lens {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-lens 2s ease-in-out infinite;
+}
+.ai-grow {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ai-grow 1.6s ease-in-out infinite;
+}
+.ai-lift {
+  animation: ai-lift 2s ease-in-out infinite;
+}
+.ai-flicker {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-flicker 1.4s ease-in-out infinite;
+}
+.ai-rise {
+  animation: ai-rise 1.4s ease-in-out infinite;
+}
+.ai-qmark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-qmark 1.8s ease-in-out infinite;
+}
+.ai-pupil {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-pupil 3s ease-in-out infinite;
+}
+.ai-charge {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  animation: ai-charge 2.4s ease-in-out infinite;
+}
+.ai-ringing {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-ringing 1.2s ease-in-out infinite;
+}
+
+@keyframes ai-swing {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(7deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+@keyframes ai-clapper {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(1.2px);
+  }
+  50% {
+    transform: translateX(-1.2px);
+  }
+  75% {
+    transform: translateX(0.6px);
+  }
+}
+@keyframes ai-hop {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-2.5px);
+  }
+}
+@keyframes ai-ping {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+@keyframes ai-nudge {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(1.6px, -1.6px);
+  }
+}
+@keyframes ai-dash {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+@keyframes ai-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  45% {
+    transform: scale(0.96);
+  }
+}
+@keyframes ai-wave {
+  0%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  50% {
+    transform: rotate(-6deg) scale(1.06);
+  }
+}
+@keyframes ai-draw {
+  0%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+  15% {
+    stroke-dashoffset: 1;
+  }
+  55% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes ai-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+@keyframes ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ai-rumble {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.6px);
+  }
+}
+@keyframes ai-lens {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(0.55);
+  }
+  90% {
+    transform: scale(1.15);
+  }
+}
+@keyframes ai-grow {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  35% {
+    transform: scaleY(0.3);
+  }
+  70% {
+    transform: scaleY(1);
+  }
+}
+@keyframes ai-lift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35%,
+  65% {
+    transform: translateY(-2.2px);
+  }
+}
+@keyframes ai-flicker {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.12);
+    opacity: 0.6;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.75;
+  }
+}
+@keyframes ai-rise {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+@keyframes ai-qmark {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+@keyframes ai-pupil {
+  0%,
+  86%,
+  100% {
+    transform: scaleY(1);
+  }
+  92% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes ai-charge {
+  0% {
+    transform: scaleX(1);
+  }
+  15% {
+    transform: scaleX(0.25);
+  }
+  75%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes ai-ringing {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(-12deg);
+  }
+  30% {
+    transform: rotate(10deg);
+  }
+  45% {
+    transform: rotate(-8deg);
+  }
+  60% {
+    transform: rotate(6deg);
+  }
+  75% {
+    transform: rotate(0);
+  }
+}

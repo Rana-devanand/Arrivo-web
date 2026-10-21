@@ -89,6 +89,10 @@ Fonts: Plus Jakarta Sans for text and Libre Baskerville for headings, both loade
 
 Buttons are `rounded-full` (see `src/components/ui/Button.tsx`). The hero uses the small button size.
 
+## Animated icons
+
+Icons that come through `AnimatedIcon` use free **Lordicon** (Wired outline) icons where one fits (`src/config/lordicons.ts` maps each icon name to its CDN key). `LordIcon` (`@lordicon/element`) loads only when an icon is about to be seen, takes the colour of the text around it, plays a reveal once, then plays on hover (or every few seconds with `loop`). Until it is ready, and for visitors who prefer reduced motion, a built-in CSS animated icon shows instead (`AnimatedIcon.tsx` and `globals.css`). Lordicon free icons need a credit link, which the footer carries. To use another icon, find its key in the Lordicon library (free ones have `premium: false`) and add it to `lordicons.ts`.
+
 ## Images
 
 - **Hero slider** (`HeroSlider.tsx`): images cross-fade every 6 seconds. All images use the same 10:9 ratio and are served as-is (`unoptimized`) to keep full quality. The blurred bottom is baked into the files. To replace them, export new 10:9 images, keep names `card-1.webp` to `card-6.webp` and update titles in `heroSlides` (`content.ts`).
