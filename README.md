@@ -93,6 +93,10 @@ Buttons are `rounded-full` (see `src/components/ui/Button.tsx`). The hero uses t
 
 Icons that come through `AnimatedIcon` use free **Lordicon** (Wired outline) icons where one fits (`src/config/lordicons.ts` maps each icon name to its CDN key). `LordIcon` (`@lordicon/element`) loads only when an icon is about to be seen, takes the colour of the text around it, plays a reveal once, then plays on hover (or every few seconds with `loop`). Until it is ready, and for visitors who prefer reduced motion, a built-in CSS animated icon shows instead (`AnimatedIcon.tsx` and `globals.css`). Lordicon free icons need a credit link, which the footer carries. To use another icon, find its key in the Lordicon library (free ones have `premium: false`) and add it to `lordicons.ts`.
 
+## Logo and page loader
+
+`AnimatedLogo` (header and footer) is the home-in-a-circle mark: it pops in, draws itself, slides left, and the name is written out in the site font. It restarts every 9 seconds. `PageLoader` (in `layout.tsx`) covers the page on first load and whenever a visitor clicks a link to another page or uses back/forward. It stays for at least 2 seconds (`MIN_VISIBLE_MS`) and never more than 10. Both styles are in `globals.css`. Reduced-motion visitors get still versions.
+
 ## Images
 
 - **Hero slider** (`HeroSlider.tsx`): images cross-fade every 6 seconds. All images use the same 10:9 ratio and are served as-is (`unoptimized`) to keep full quality. The blurred bottom is baked into the files. To replace them, export new 10:9 images, keep names `card-1.webp` to `card-6.webp` and update titles in `heroSlides` (`content.ts`).

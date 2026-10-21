@@ -19,7 +19,7 @@ export function StoreButtons({ className = "", inverse = false, size = "md" }: S
       <Button href={appStore.href} variant={inverse ? "inverse" : "primary"} size={size} className="justify-start">
         <BrandIcon name="apple" className={icon} />
         <span className="flex flex-col text-left leading-tight">
-          <span className={`whitespace-nowrap font-medium uppercase tracking-wide ${caption}`}>Download on the</span>
+          <span className={`whitespace-nowrap font-medium text-xs uppercase tracking-wide ${caption}`}>Download on the</span>
           <span className={`whitespace-nowrap font-bold ${name}`}>App Store</span>
           <span className="sr-only"> (Arrivo for iPhone)</span>
         </span>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { siteConfig, type NavItem } from "@/config/site";
 import { Container } from "@/components/ui/Container";
-import { Wordmark } from "@/components/ui/Wordmark";
+import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 
 const linkClasses = "inline-flex min-h-11 items-center text-base text-muted-foreground hover:text-foreground";
 
@@ -28,7 +28,7 @@ export function Footer() {
       <Container className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-1">
           <p className="text-3xl">
-            <Wordmark />
+            <AnimatedLogo />
           </p>
           <p className="mt-2 max-w-xs text-muted-foreground">{siteConfig.tagline}</p>
         </div>

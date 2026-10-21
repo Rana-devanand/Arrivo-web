@@ -52,6 +52,5 @@
   --shadow-lg: var(--shadow-lg);
 
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-brand: var(--font-anton), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-baskerville), ui-serif, Georgia, serif;
 }

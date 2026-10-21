@@ -407,3 +407,239 @@
     transform: rotate(0);
   }
 }
+
+/* Animated logo: the home mark pops in, draws, slides, then the name is written. */
+.alogo {
+  --badge: 1.45em;
+  --gap: 0.35em;
+  --shift: 1.8em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap);
+  line-height: 1;
+  transition: opacity 0.45s ease;
+}
+.alogo-out {
+  opacity: 0;
+}
+.alogo-mark {
+  position: relative;
+  display: inline-flex;
+  transform: translateX(var(--shift));
+  animation: alogo-slide 0.6s cubic-bezier(0.65, 0, 0.25, 1) 1.2s forwards;
+}
+.alogo-mark::before,
+.alogo-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  opacity: 0;
+  animation: alogo-pulse 4.5s ease-out 1.9s infinite;
+}
+.alogo-mark::after {
+  animation-delay: 4.15s;
+}
+.alogo-badge {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--badge);
+  height: var(--badge);
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  transform: scale(0);
+  opacity: 0;
+  animation: alogo-pop 1.2s cubic-bezier(0.34, 1.3, 0.5, 1) forwards;
+}
+.alogo-badge svg {
+  width: 58%;
+  height: 58%;
+  overflow: visible;
+}
+.alogo-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: alogo-draw 0.6s ease-out 0.3s forwards;
+}
+.alogo-text {
+  display: inline-flex;
+}
+.alogo-letter {
+  /* Uppercase */
+  text-transform: uppercase;
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-0.35em);
+  filter: blur(2px);
+  animation: alogo-write 0.35s ease-out forwards;
+  animation-delay: calc(1.35s + var(--i) * 70ms);
+}
+
+@keyframes alogo-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.88);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes alogo-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes alogo-slide {
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes alogo-write {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+@keyframes alogo-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alogo-mark,
+  .alogo-badge,
+  .alogo-letter {
+    animation: none;
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+  .alogo-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .alogo-mark::before,
+  .alogo-mark::after {
+    animation: none;
+  }
+}
+
+/* Page loader, shown on first load and whenever the visitor moves to another page. */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: var(--background);
+  color: var(--foreground);
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+.page-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.page-loader-mark {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+}
+.page-loader-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  opacity: 0;
+  animation: page-loader-ring 1.8s ease-out infinite;
+}
+.page-loader-ring:nth-child(2) {
+  animation-delay: 0.6s;
+}
+.page-loader-ring:nth-child(3) {
+  animation-delay: 1.2s;
+}
+.page-loader-badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  animation: page-loader-breathe 1.8s ease-in-out infinite;
+}
+.page-loader-text {
+  display: flex;
+}
+.page-loader-text span {
+  display: inline-block;
+  animation: page-loader-wave 1.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.1s);
+}
+
+@keyframes page-loader-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+@keyframes page-loader-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+@keyframes page-loader-wave {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(-5px);
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader-ring,
+  .page-loader-badge,
+  .page-loader-text span {
+    animation: none;
+  }
+}
