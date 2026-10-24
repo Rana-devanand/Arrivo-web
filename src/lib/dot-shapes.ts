@@ -52,25 +52,10 @@ function inside(polygon: readonly Vec2[], x: number, y: number) {
 }
 
 function journey(): Dot[] {
-  const layers = [-0.32, -0.16, 0, 0.16, 0.32];
-  const body: Vec2[] = [
-    [-0.88, -0.2], [-0.88, 0], [-0.72, 0.1], [-0.46, 0.14], [-0.22, 0.46], [0.24, 0.46],
-    [0.5, 0.14], [0.78, 0.08], [0.9, -0.04], [0.9, -0.2], [-0.88, -0.2],
-  ];
-  const windows: Vec2[] = [[-0.38, 0.17], [-0.2, 0.4], [-0.02, 0.4], [-0.02, 0.17], [-0.38, 0.17]];
-  const windows2: Vec2[] = [[0.04, 0.17], [0.04, 0.4], [0.22, 0.4], [0.42, 0.17], [0.04, 0.17]];
-  const sides = [-0.32, 0.32];
-  const wheels = [-0.5, 0.52].flatMap((x) =>
-    sides.flatMap((z) => [...ring(x, -0.22, z, 0.2, 40, 0, "xy"), ...ring(x, -0.22, z, 0.09, 16, 1, "xy")]),
-  );
-  const lights = sides.flatMap((z) => [...ring(0.86, -0.02, z, 0.04, 8, 1, "xy"), ...ring(-0.86, -0.05, z, 0.04, 8, 1, "xy")]);
-  return [
-    ...along(body, 0.03, 0, layers),
-    ...along(windows, 0.03, 1, sides),
-    ...along(windows2, 0.03, 1, sides),
-    ...wheels,
-    ...lights,
-  ];
+  const roof: Vec2[] = [[-0.82, 0.05], [0, 0.78], [0.82, 0.05]];
+  const walls: Vec2[] = [[-0.62, 0.05], [-0.62, -0.72], [0.62, -0.72], [0.62, 0.05]];
+  const door: Vec2[] = [[-0.18, -0.72], [-0.18, -0.25], [0.18, -0.25], [0.18, -0.72]];
+  return [...along(roof, 0.028, 0), ...along(walls, 0.028, 0), ...along(door, 0.026, 1)];
 }
 
 function location(): Dot[] {
