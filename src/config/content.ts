@@ -1,3 +1,4 @@
+import type { DotShapeId } from "@/lib/dot-shapes";
 import type { IconName } from "@/components/ui/Icon";
 import type { ScreenVariant } from "@/components/ui/AppScreen";
 
@@ -17,6 +18,20 @@ export const facts: readonly Fact[] = [
   { icon: "userCheck", title: "Your people say yes first", text: "A contact sees nothing until they accept your invitation, and you can remove them at any moment." },
   { icon: "shieldCheck", title: "Honest about what it can do", text: "Arrivo tells your contacts. It does not call emergency services for you, and it says so clearly in the app." },
 ];
+
+export const factsHead = {
+  eyebrow: "Why people trust Arrivo",
+  title: "Safety you can see, privacy you control.",
+  intro: "Only the people you choose, only while you travel.",
+  linkLabel: "See how Arrivo keeps you safe",
+  href: "/safety",
+} as const;
+
+export const worryingHead = {
+  eyebrow: "Arrivo at a glance",
+  title: "Worrying should not be part of the journey",
+  intro: "Most of us still rely on texts and phone calls to know someone got home. Arrivo replaces the guessing with something calm and clear.",
+} as const;
 
 export const withoutArrivo: readonly string[] = [
   "Texting “reached?” and waiting for a reply that may not come",
@@ -42,6 +57,12 @@ export const features: readonly Feature[] = [
   { icon: "signal", title: "Works when signal does not", text: "Offline? Arrivo keeps saving your location and sends it in order when you reconnect." },
   { icon: "lock", title: "Private by design", text: "No coordinates in notification text. Your data is never sold or used for advertising." },
 ];
+
+export const featuresHead = {
+  eyebrow: "Features",
+  title: "Everything you need to travel with peace of mind",
+  intro: "Simple for you, calm for the people who care about you.",
+} as const;
 
 export const featureDetails: readonly FeatureDetail[] = [
   {
@@ -317,3 +338,36 @@ export const heroSlides: readonly HeroSlide[] = [
     text: "One tap, and everyone who cares knows you made it.",
   },
 ];
+
+export type HeroShape = { shape: DotShapeId; word: string };
+
+/** The hero headline is one sentence; only the highlighted word changes with the canvas shape (one or two words). */
+export const heroHeadline = { before: "Share your", after: "with the people who\ncare." } as const;
+
+export const heroShapes: readonly HeroShape[] = [
+  { shape: "journey", word: "journey" },
+  { shape: "location", word: "live location" },
+  { shape: "ontime", word: "arrival time" },
+  { shape: "safe", word: "safe arrival" },
+];
+
+/** The large sliding line under How it works. Each phrase is a promise the app actually keeps. */
+export const marqueePhrases: readonly string[] = ["Shared only while you travel", "You choose who sees", "Late? We ask you first", "Calm for those who wait"];
+
+/** The numbers on the About page are product facts, not statistics. */
+export const aboutStats = [
+  { value: 0, suffix: "", label: "coordinates in notifications", text: "Notification text never contains your location." },
+  { value: 1, suffix: " tap", label: "to say you arrived", text: "One tap on arrival and everyone hears you are safe." },
+  { value: 100, suffix: "%", label: "consent first", text: "A contact sees nothing until they accept your invitation." },
+] as const;
+
+export const aboutGlance = [
+  { label: "Product", value: "Arrivo, a travel-safety app" },
+  { label: "What it does", value: "Shares a journey and live location with the people you trust, and tells them the moment you arrive" },
+  { label: "Platforms", value: "Android and iOS" },
+  { label: "Who can see", value: "Only the contacts you choose, and only while you travel" },
+  { label: "If you run late", value: "Arrivo checks on you first, then your contacts" },
+  { label: "What it never does", value: "It never calls emergency services for you" },
+  { label: "Approach", value: "Calm, honest and private by design" },
+  { label: "Contact", value: "support@tryarrivo.com" },
+] as const;

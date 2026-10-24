@@ -9,6 +9,7 @@ import { FeatureGrid } from "@/components/ui/FeatureGrid";
 import { Heading } from "@/components/ui/Heading";
 import { Icon } from "@/components/ui/Icon";
 import { Section } from "@/components/ui/Section";
+import { OfficeMap } from "@/components/ui/OfficeMap";
 import { PageHero } from "@/components/sections/PageHero";
 
 export const metadata: Metadata = buildMetadata({
@@ -28,7 +29,7 @@ const include = [
 export default function SupportPage() {
   return (
     <>
-      <PageHero eyebrow="Support" title="We are here to help" intro="Find a quick fix below, or reach out. We read every message." screen="faq" tone="muted" />
+      <PageHero eyebrow="Support" title="We are here to help" intro="Find a quick fix below, or reach out. We read every message." screen="faq" />
       <Section id="contact" title="Ways to reach us">
         <div className="grid gap-6 md:grid-cols-3">
           <Card as="article" className="flex h-full flex-col gap-3">
@@ -51,10 +52,13 @@ export default function SupportPage() {
           </Card>
         </div>
       </Section>
+      <Section id="find-us" title="Find us" intro="Prefer to talk in person? Our office address is below.">
+        <OfficeMap />
+      </Section>
       <Section id="troubleshooting" title="Common fixes" intro="Try these first." tone="muted">
         <FeatureGrid items={troubleshooting} columns={4} />
       </Section>
-      <Section id="report" title="What to include in your message" align="left">
+      <Section id="report" title="What to include in your message">
         <div className="max-w-2xl">
           <CheckList items={include} />
         </div>

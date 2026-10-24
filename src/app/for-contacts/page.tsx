@@ -36,7 +36,7 @@ export default function ForContactsPage() {
       <Section id="what-you-see" title="What you will see" tone="muted">
         <FeatureGrid items={contactSees} columns={4} />
       </Section>
-      <Section id="accept" title="How to accept an invitation" intro="Four steps, about a minute." align="left">
+      <Section id="accept" title="How to accept an invitation" intro="Four steps, about a minute.">
         <Timeline steps={contactSteps} />
       </Section>
       <Section id="no-app" title="No app? You can still follow" tone="inverse">
@@ -55,7 +55,7 @@ export default function ForContactsPage() {
           </Card>
         </div>
       </Section>
-      <Section id="your-control" title="You are always in control" align="left">
+      <Section id="your-control" title="You are always in control">
         <div className="max-w-2xl">
           <CheckList items={control} />
         </div>

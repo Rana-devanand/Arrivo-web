@@ -5,12 +5,14 @@ import { Navbar } from "./Navbar";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
-      <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="inline-flex min-h-11 items-center text-2xl text-foreground">
-          <AnimatedLogo />
-        </Link>
-        <Navbar />
+    <header className="sticky top-0 z-40 pt-4">
+      <Container>
+        <div className="flex h-[4.5rem] items-center justify-between rounded-full border border-card/80 bg-card/40 px-3 shadow-md backdrop-blur-xl lg:grid lg:grid-cols-[1fr_auto_1fr] lg:justify-items-center lg:pl-7 lg:pr-3">
+          <Link href="/" className="inline-flex min-h-11 items-center pl-3 text-2xl text-nav lg:justify-self-start lg:pl-0">
+            <AnimatedLogo />
+          </Link>
+          <Navbar />
+        </div>
       </Container>
     </header>
   );

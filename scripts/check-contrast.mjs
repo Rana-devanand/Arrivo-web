@@ -13,6 +13,10 @@ const pairs = [
   ["muted-foreground", "card"],
   ["primary", "background"],
   ["foreground", "muted"],
+  ["nav", "background"],
+  ["nav", "card"],
+  ["nav", "muted"],
+  ["highlight", "background"],
 ];
 
 function parseBlock(block) {

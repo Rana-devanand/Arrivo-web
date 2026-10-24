@@ -38,18 +38,6 @@
   }
 }
 
-/* Keep the free OpenStreetMap tiles in step with the black and white theme. */
-.leaflet-tile-pane {
-  filter: grayscale(1) contrast(1.05);
-}
-
-.leaflet-tooltip {
-  border: 0;
-  border-radius: 9999px;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-}
-
 /* Animated icons (AnimatedIcon). Parts rest in their normal pose and move while --ai-state is running. */
 .ai {
   --ai-state: paused;
@@ -434,7 +422,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--nav);
   opacity: 0;
   animation: alogo-pulse 4.5s ease-out 1.9s infinite;
 }
@@ -449,7 +437,7 @@
   width: var(--badge);
   height: var(--badge);
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--nav);
   color: var(--primary-foreground);
   transform: scale(0);
   opacity: 0;
@@ -641,5 +629,135 @@
   .page-loader-badge,
   .page-loader-text span {
     animation: none;
+  }
+}
+
+/* Big sliding line of promises. */
+.marquee-track {
+  animation: marquee 55s linear infinite;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: none;
+  }
+  .marquee-copy[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* Custom cursor: a dot on the pointer and a ring that trails it. Hidden on touch and for reduced motion. */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+}
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--highlight);
+  transition: opacity 0.3s;
+}
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 1.5px solid color-mix(in srgb, var(--foreground) 35%, transparent);
+  transition:
+    width 0.45s ease,
+    height 0.45s ease,
+    margin 0.45s ease,
+    scale 0.2s ease,
+    opacity 0.3s,
+    background-color 0.45s,
+    border-color 0.45s;
+}
+.cursor-dot.is-visible,
+.cursor-ring.is-visible {
+  opacity: 1;
+}
+.cursor-ring.is-hover {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border-color: var(--highlight);
+  background: color-mix(in srgb, var(--highlight) 10%, transparent);
+}
+.cursor-ring.is-down {
+  scale: 0.85;
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* Section headings: each word slides up out of its own line, one after another. */
+.split-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0 0.18em 0.3em;
+  margin: 0 -0.18em -0.3em;
+}
+.split-word {
+  display: inline-block;
+  transform: translateY(140%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 60ms);
+}
+.is-in .split-word {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .split-word {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* A slow float for the phone in page heroes. */
+.animate-float {
+  animation: float-y 6s ease-in-out infinite;
+}
+@keyframes float-y {
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-float {
+    animation: none;
+  }
+}
+
+/* Statement words fade up in order. */
+.statement-word {
+  opacity: 0.18;
+  transition: opacity 0.6s ease calc(var(--i, 0) * 45ms);
+}
+.is-lit .statement-word {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .statement-word {
+    opacity: 1;
+    transition: none;
   }
 }

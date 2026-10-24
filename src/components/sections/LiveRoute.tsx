@@ -1,16 +1,15 @@
 "use client";
 
-import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { LatLngExpression, LayerGroup, Map as LeafletMap, Marker } from "leaflet";
+import type { Map as MapLibreMap, Marker } from "maplibre-gl";
+import { loadMapLibre, loadMapStyle } from "@/lib/map";
 import { makeNearbyTrip, pickRandomTrip, type Place, type Trip } from "@/config/routes";
 import { Heading } from "@/components/ui/Heading";
 import { Icon } from "@/components/ui/Icon";
 
-type Leaflet = typeof import("leaflet");
+type MapLibre = typeof import("maplibre-gl");
 type Summary = { trip: Trip; km: number; minutes: number; estimated: boolean };
 
-const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSRM = "https://router.project-osrm.org/route/v1/driving";
 const LOOP_SECONDS = 22;
 
@@ -100,9 +99,9 @@ async function nameTrip(trip: Trip): Promise<Trip> {
 export function LiveRoute() {
   const section = useRef<HTMLElement>(null);
   const container = useRef<HTMLDivElement>(null);
-  const lib = useRef<Leaflet | null>(null);
-  const map = useRef<LeafletMap | null>(null);
-  const layer = useRef<LayerGroup | null>(null);
+  const lib = useRef<MapLibre | null>(null);
+  const map = useRef<MapLibreMap | null>(null);
+  const markers = useRef<Marker[]>([]);
   const traveller = useRef<Marker | null>(null);
   const frame = useRef(0);
   const trip = useRef<Trip | undefined>(undefined);
@@ -110,10 +109,9 @@ export function LiveRoute() {
   const [summary, setSummary] = useState<Summary | null>(null);
 
   const showRoute = useCallback(async () => {
-    const L = lib.current;
-    const leafletMap = map.current;
-    const group = layer.current;
-    if (!L || !leafletMap || !group) return;
+    const maplibre = lib.current;
+    const mapInstance = map.current;
+    if (!maplibre || !mapInstance) return;
 
     cancelAnimationFrame(frame.current);
     country.current ??= (await detectCountry()) ?? "IN";
@@ -123,42 +121,42 @@ export function LiveRoute() {
     trip.current = chosen;
     const [result, next] = await Promise.all([fetchRoute(chosen), nameTrip(chosen)]);
 
-    group.clearLayers();
+    markers.current.forEach((marker) => marker.remove());
+    markers.current = [];
+    traveller.current?.remove();
+
     const line = token("primary");
     const halo = token("background");
     const accent = token("accent");
-    const path = result.points as LatLngExpression[];
+    const path = result.points.map(([lat, lng]) => [lng, lat] as [number, number]);
 
-    L.polyline(path, { color: halo, weight: 10, opacity: 0.95, lineCap: "round" }).addTo(group);
-    L.polyline(path, { color: line, weight: 5, lineCap: "round", dashArray: result.estimated ? "2 10" : undefined }).addTo(group);
+    const data = { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: path } } as const;
+    const source = mapInstance.getSource("route") as import("maplibre-gl").GeoJSONSource | undefined;
+    if (source) {
+      source.setData(data);
+    } else {
+      mapInstance.addSource("route", { type: "geojson", data });
+      mapInstance.addLayer({ id: "route-halo", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": halo, "line-width": 10, "line-opacity": 0.95 } });
+      mapInstance.addLayer({ id: "route-line", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": line, "line-width": 5 } });
+    }
+    mapInstance.setPaintProperty("route-line", "line-dasharray", result.estimated ? [0.4, 2] : [1, 0]);
 
-    const pin = (place: Trip["from"], filled: boolean) =>
-      L.marker([place.lat, place.lng], {
-        icon: L.divIcon({
-          className: "",
-          iconSize: [20, 20],
-          iconAnchor: [10, 10],
-          html: `<span class="block size-5 rounded-full border-4 border-background shadow-md ${filled ? "bg-primary" : "bg-background ring-4 ring-primary"}"></span>`,
-        }),
-        keyboard: false,
-      })
-        .bindTooltip(place.name, { permanent: true, direction: "top", offset: [0, -10] })
-        .addTo(group);
+    const pin = (place: Trip["from"], filled: boolean) => {
+      const el = document.createElement("div");
+      el.className = "relative";
+      el.innerHTML = `<span class="block size-5 rounded-full border-4 border-background shadow-md ${filled ? "bg-primary" : "bg-background ring-4 ring-primary"}"></span><span class="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-card px-3 py-1 text-xs font-semibold text-card-foreground shadow-md"></span>`;
+      el.lastElementChild!.textContent = place.name;
+      markers.current.push(new maplibre.Marker({ element: el }).setLngLat([place.lng, place.lat]).addTo(mapInstance));
+    };
     pin(next.from, false);
     pin(next.to, true);
 
-    traveller.current = L.marker(path[0], {
-      icon: L.divIcon({
-        className: "",
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
-        html: `<span class="relative flex size-[22px]"><span class="absolute inline-flex size-full animate-ping rounded-full opacity-60" style="background:${accent}"></span><span class="relative inline-flex size-[22px] rounded-full border-[3px] border-background" style="background:${accent}"></span></span>`,
-      }),
-      keyboard: false,
-      interactive: false,
-    }).addTo(group);
+    const dot = document.createElement("div");
+    dot.innerHTML = `<span class="relative flex size-[22px]"><span class="absolute inline-flex size-full animate-ping rounded-full opacity-60" style="background:${accent}"></span><span class="relative inline-flex size-[22px] rounded-full border-[3px] border-background" style="background:${accent}"></span></span>`;
+    traveller.current = new maplibre.Marker({ element: dot }).setLngLat(path[0]).addTo(mapInstance);
 
-    leafletMap.fitBounds(L.latLngBounds(path), { padding: [90, 90], maxZoom: 16 });
+    const bounds = path.reduce((box, point) => box.extend(point), new maplibre.LngLatBounds(path[0], path[0]));
+    mapInstance.fitBounds(bounds, { padding: 90, maxZoom: 15 });
     setSummary({ trip: next, km: result.km, minutes: result.minutes, estimated: result.estimated });
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || result.points.length < 2) return;
@@ -178,7 +176,7 @@ export function LiveRoute() {
       const t = Math.min(1, Math.max(0, (target - cumulative[i - 1]) / span));
       const [aLat, aLng] = result.points[i - 1];
       const [bLat, bLng] = result.points[i];
-      traveller.current?.setLatLng([aLat + (bLat - aLat) * t, aLng + (bLng - aLng) * t]);
+      traveller.current?.setLngLat([aLng + (bLng - aLng) * t, aLat + (bLat - aLat) * t]);
       frame.current = requestAnimationFrame(step);
     };
     frame.current = requestAnimationFrame(step);
@@ -195,22 +193,21 @@ export function LiveRoute() {
       async ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
-        const L = (await import("leaflet")).default;
+        const [maplibre, style] = await Promise.all([loadMapLibre(), loadMapStyle()]);
         if (cancelled) return;
-        lib.current = L;
-        const leafletMap = L.map(target, {
-          zoomControl: false,
-          scrollWheelZoom: false,
-          dragging: !L.Browser.mobile,
-          worldCopyJump: false,
-        }).setView([22.5, 79], 5);
-        L.control.zoom({ position: "bottomright" }).addTo(leafletMap);
-        L.tileLayer(TILES, {
-          maxZoom: 19,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(leafletMap);
-        map.current = leafletMap;
-        layer.current = L.layerGroup().addTo(leafletMap);
+        lib.current = maplibre;
+        const mapInstance = new maplibre.Map({
+          container: target,
+          style,
+          center: [79, 22.5],
+          zoom: 4,
+          cooperativeGestures: true,
+          attributionControl: { compact: true },
+        });
+        mapInstance.addControl(new maplibre.NavigationControl({ showCompass: false }), "bottom-right");
+        map.current = mapInstance;
+        await new Promise<void>((resolve) => mapInstance.once("load", () => resolve()));
+        if (cancelled) return;
         await showRoute();
       },
       { rootMargin: "500px 0px" },
@@ -228,14 +225,14 @@ export function LiveRoute() {
 
   return (
     <section ref={section} id="live-route" aria-labelledby="live-route-title" className="relative isolate h-[92svh] min-h-[620px] bg-muted">
-      <div ref={container} role="application" aria-label="Map showing a sample journey" className="absolute inset-0 z-0" />
+      <div ref={container} role="application" aria-label="Map showing a sample journey" className="absolute! inset-0 z-0" />
       <div className="pointer-events-none absolute inset-0 z-[1100] flex flex-col justify-between p-3 sm:p-5">
         <div className="pointer-events-auto max-w-[17rem] rounded-xl bg-card/95 px-4 py-3 text-card-foreground shadow-md backdrop-blur sm:max-w-sm">
           <Heading level={2} id="live-route-title" className="text-base leading-snug sm:text-xl">
             See a journey the way your contacts do
           </Heading>
           <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
-            Live map, route and arrival time. A random sample on free OpenStreetMap.
+            Live map, route and arrival time. A random sample on free OpenFreeMap.
           </p>
         </div>
         <div className="pointer-events-auto flex max-w-xl flex-col gap-4 rounded-2xl bg-primary p-5 text-primary-foreground shadow-lg sm:p-6">

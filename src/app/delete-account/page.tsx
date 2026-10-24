@@ -23,15 +23,15 @@ export default function DeleteAccountPage() {
         eyebrow="Your data"
         title="Delete your Arrivo account"
         intro="You can delete your account and data at any time, from inside the app. Here is exactly what happens, step by step." screen="privacy"
-        tone="muted"
+
       />
-      <Section id="steps" title="Four steps" align="left">
+      <Section id="steps" title="Four steps">
         <Timeline steps={deleteSteps} />
       </Section>
-      <Section id="what-is-removed" title="What gets removed" tone="muted" align="left">
+      <Section id="what-is-removed" title="What gets removed" tone="muted">
         <DataTable caption="What happens to your data" headers={deleteTable.headers} rows={deleteTable.rows} />
       </Section>
-      <Section id="no-access" title="Cannot open the app?" align="left">
+      <Section id="no-access" title="Cannot open the app?">
         <Card className="max-w-2xl">
           <Heading level={3}>Ask us to delete it for you</Heading>
           <p className="mt-2 text-muted-foreground">

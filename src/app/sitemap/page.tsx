@@ -34,10 +34,10 @@ export default function SitemapPage() {
         eyebrow="Sitemap"
         title="Every page, in one place"
         intro="This is a list of everything on the Arrivo website. If you cannot find something, start here."
-        tone="muted"
+
       />
       {groups.map((group, index) => (
-        <Section key={group.id} id={group.id} title={group.title} intro={group.intro} align="left" tone={index % 2 === 0 ? "default" : "muted"}>
+        <Section key={group.id} id={group.id} title={group.title} intro={group.intro} tone={index % 2 === 0 ? "default" : "muted"}>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {group.items.map((item) => (
               <li key={item.href}>

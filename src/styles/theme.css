@@ -6,24 +6,49 @@
 */
 
 :root {
-  --background: #fafafa;
+  --background: #ebedf1;
   --foreground: #000000;
   --card: #ffffff;
   --card-foreground: #000000;
-  --primary: #000000;
+  --primary: #1d4a6a;
   --primary-foreground: #ffffff;
   --secondary: #efefef;
   --secondary-foreground: #000000;
-  --accent: #262626;
+  --accent: #15374f;
   --accent-foreground: #ffffff;
   --muted: #f2f2f2;
   --muted-foreground: #404040;
   --border: #d4d4d4;
+  --nav: #1d4a6a;
+  --spot: #5aa9d6;
+  --highlight: #1670a8;
+
+  /* Map colours, applied on top of the free OpenFreeMap style (see src/lib/map.ts). */
+  --map-land: #eef0f4;
+  --map-residential: #e8ecf2;
+  --map-park: #d9efe0;
+  --map-wood: #cfe8d6;
+  --map-water: #c6e0ee;
+  --map-water-line: #b4d4e6;
+  --map-building: #e1e6ee;
+  --map-building-edge: #d3dae5;
+  --map-road: #ffffff;
+  --map-road-edge: #d9dfe8;
+  --map-motorway: #fbe9da;
+  --map-motorway-edge: #e8d2be;
+  --map-rail: #d8dde5;
+  --map-label: #5b6470;
+  --map-label-strong: #2b3038;
+  --map-water-label: #2f7fa6;
 
   --radius: 0.75rem;
   --shadow-sm: 0 1px 2px 0 rgb(20 17 9 / 0.1);
   --shadow-md: 0 8px 24px -8px rgb(20 17 9 / 0.22);
   --shadow-lg: 0 24px 56px -16px rgb(20 17 9 / 0.35);
+  /* Soft raised and pressed surfaces for cards. */
+  --shadow-soft: 6px 6px 16px rgb(160 166 186 / 0.35), -6px -6px 16px rgb(255 255 255 / 0.9);
+  --shadow-raise: 12px 12px 28px rgb(160 166 186 / 0.42), -12px -12px 28px rgb(255 255 255 / 0.95);
+  --shadow-press: inset 6px 6px 14px rgb(160 166 186 / 0.38), inset -6px -6px 14px rgb(255 255 255 / 0.95);
 }
 
 @theme inline {
@@ -41,6 +66,8 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-nav: var(--nav);
+  --color-highlight: var(--highlight);
 
   --radius-sm: calc(var(--radius) - 0.25rem);
   --radius-md: var(--radius);
@@ -50,6 +77,9 @@
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-raise: var(--shadow-raise);
+  --shadow-press: var(--shadow-press);
 
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-baskerville), ui-serif, Georgia, serif;

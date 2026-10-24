@@ -25,25 +25,39 @@ export const screenCatalog = {
 
 export type ScreenVariant = keyof typeof screenCatalog;
 
+const widths = { lg: "w-72", md: "w-60", sm: "w-40" } as const;
+
 type AppScreenProps = {
   variant: ScreenVariant;
   className?: string;
   priority?: boolean;
-  size?: "md" | "sm";
+  size?: "lg" | "md" | "sm";
 };
 
+/**
+ * A screenshot inside the phone frame (public/phone-frame.webp, 1152 x 2048, transparent screen). The frame is
+ * drawn as a 9-slice border so its corners and bezel keep their shape while the middle stretches to the
+ * screenshot's own proportions. Widths are in container units so everything scales with the phone.
+ */
 export function AppScreen({ variant, className = "", priority = false, size = "md" }: AppScreenProps) {
   return (
-    <div className={`w-full ${size === "sm" ? "max-w-40" : "max-w-64"} rounded-[2rem] bg-foreground p-[7px] shadow-lg ${className}`}>
-      <div className="relative aspect-[390/844] overflow-hidden rounded-[1.5rem]">
-        <Image
-          src={`/screens/${variant}.webp`}
-          alt={`Screenshot: ${screenCatalog[variant]}`}
-          width={780}
-          height={1688}
-          sizes={size === "sm" ? "160px" : "(min-width: 640px) 256px, 70vw"}
-          priority={priority}
-          className="size-full object-cover"
+    <div className={`${widths[size]} max-w-full drop-shadow-xl ${className}`}>
+      <div className="relative aspect-[1/2.0645] [container-type:inline-size]">
+        <div className="absolute inset-x-[4.2cqw] inset-y-[4.1cqw] overflow-hidden rounded-[7cqw]">
+          <Image
+            src={`/screens/${variant}.webp`}
+            alt={`Screenshot: ${screenCatalog[variant]}`}
+            width={780}
+            height={1688}
+            sizes={size === "sm" ? "160px" : size === "lg" ? "(min-width: 640px) 288px, 75vw" : "(min-width: 640px) 240px, 70vw"}
+            priority={priority}
+            className="size-full object-cover"
+          />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 border-solid border-transparent"
+          style={{ borderWidth: "11.3cqw", borderImage: "url(/phone-frame.webp) 130 / 11.3cqw stretch" }}
         />
       </div>
     </div>

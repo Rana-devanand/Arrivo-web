@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { escalation, neverList, principles, situations, toolsList } from "@/config/content";
+import { escalation, principles, situations, toolsList } from "@/config/content";
 import { buildMetadata } from "@/lib/seo";
-import { Card } from "@/components/ui/Card";
-import { CheckList } from "@/components/ui/CheckList";
 import { DataTable } from "@/components/ui/DataTable";
 import { FeatureGrid } from "@/components/ui/FeatureGrid";
 import { Section } from "@/components/ui/Section";
@@ -25,12 +23,11 @@ export default function SafetyPage() {
         title="Safety you can understand at a glance"
         intro="Arrivo is calm by design. It tells the truth about what it knows, checks on you before it alerts anyone, and leaves decisions to you and your people."
         screen="overdue"
-        tone="muted"
       />
       <Section id="principles" title="Four principles behind every screen">
         <FeatureGrid items={principles} columns={4} />
       </Section>
-      <Section id="escalation" title="What happens when you are late" intro="Timings are defaults and may change before launch." tone="muted" align="left">
+      <Section id="escalation" title="What happens when you are late" intro="Timings are defaults and may change before launch." tone="muted">
         <DataTable caption="Late-arrival escalation" headers={escalation.headers} rows={escalation.rows} />
       </Section>
       <FeatureRow
@@ -41,7 +38,7 @@ export default function SafetyPage() {
         screen="live"
         reverse
       />
-      <Section id="situations" title="When things do not go to plan" tone="muted" align="left">
+      <Section id="situations" title="When things do not go to plan" tone="muted">
         <DataTable caption="Situations and Arrivo's response" headers={situations.headers} rows={situations.rows} />
       </Section>
       <Section id="tools" title="Tools for when you need them" intro="Available from the home screen at any time." >
@@ -53,13 +50,7 @@ export default function SafetyPage() {
         title="A timer for the times you have no destination"
         text="Walking home, meeting someone new, waiting for a late cab: start a safety timer. Tap I am safe before it ends and nothing happens. If time runs out, your contacts are told."
         screen="timer"
-        tone="muted"
       />
-      <Section id="never" title="What Arrivo never does" tone="inverse">
-        <Card className="mx-auto max-w-2xl">
-          <CheckList items={neverList} icon="close" />
-        </Card>
-      </Section>
       <FinalCta title="Travel with people who have your back" />
     </>
   );

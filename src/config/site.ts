@@ -12,12 +12,13 @@ const product = [
 
 const help = [
   { label: "FAQ", href: "/faq", description: "Answers on privacy, safety, battery and your account." },
+  { label: "Contact", href: "/contact", description: "Write to us, find our office or ask for help." },
   { label: "Support", href: "/support", description: "Quick fixes and how to reach us." },
   { label: "Delete your account", href: "/delete-account", description: "The steps in the app and what is removed." },
 ] satisfies NavItem[];
 
 const company = [
-  { label: "About Arrivo", href: "/about", description: "Why we built it and what we believe." },
+  { label: "About us", href: "/about", description: "Why we built it and what we believe." },
   { label: "Privacy Policy", href: "/privacy-policy", description: "What we collect, why, and for how long." },
   { label: "Terms of Service", href: "/terms", description: "The rules for using the app and website." },
   { label: "Sitemap", href: "/sitemap", description: "Every page of this website in one place." },
@@ -45,7 +46,9 @@ export const siteConfig = {
     "Arrivo is a travel-safety app for Android and iOS. Share a journey and live location with trusted contacts, and let them know the moment you arrive safely.",
   category: "LifestyleApplication",
   copyrightYear: 2026,
-  supportEmail: "[PLACEHOLDER: support email]",
+  supportEmail: "support@tryarrivo.com",
+  /** Placeholder office: Ranchi, Jharkhand. Replace the address and coordinates when the real office is known. */
+  office: { name: "Arrivo", address: "Gautam Buddha Marg in the Sarhul Nagar / Bariatu area of Ranchi, Jharkhand (834009), Ranchi, Jharkhand", lat: 23.3441, lng: 85.3096, zoom: 11.5, pinned: true },
   stores: {
     appStore: { label: "Download Arrivo on the App Store", href: "#" },
     playStore: { label: "Get Arrivo on Google Play", href: "#" },
@@ -55,7 +58,13 @@ export const siteConfig = {
     { label: "X (Twitter)", href: "#" },
     { label: "LinkedIn", href: "#" },
   ] satisfies SocialLink[],
-  nav: [...product, { label: "FAQ", href: "/faq" }] satisfies NavItem[],
+  nav: [
+    { label: "Features", href: "/features" },
+    { label: "How it works", href: "/how-it-works" },
+    { label: "Safety", href: "/safety" },
+    { label: "Contact", href: "/contact" },
+    { label: "About us", href: "/about" },
+  ] satisfies NavItem[],
   footer: { product, help, company },
   homeSections,
   downloadHref: "/#download",

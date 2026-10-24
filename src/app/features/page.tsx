@@ -33,10 +33,9 @@ export default function FeaturesPage() {
           points={feature.points}
           screen={feature.screen}
           reverse={index % 2 === 1}
-          tone={index % 2 === 0 ? "default" : "muted"}
         />
       ))}
-      <Section id="all-features" title="And everything else" intro="The details that make a trip feel looked after." tone="inverse">
+      <Section id="all-features" title="And everything else" intro="The details that make a trip feel looked after.">
         <FeatureGrid items={features} columns={4} />
       </Section>
       <Showcase
@@ -44,7 +43,7 @@ export default function FeaturesPage() {
         title="More of the app"
         intro="A few more screens you will use every day."
         screens={moreScreens}
-        tone="muted"
+
       />
       <FinalCta title="Try Arrivo on your next trip" />
     </>
