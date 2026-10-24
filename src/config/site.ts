@@ -26,9 +26,9 @@ const company = [
 
 /** The parts of the home page that have their own link. */
 const homeSections = [
+  { label: "Why people trust Arrivo", href: "/#trust", description: "Safety you can see, privacy you control." },
   { label: "Why Arrivo", href: "/#why", description: "Worrying should not be part of the journey." },
-  { label: "Live route map", href: "/#live-route", description: "A sample journey on a free OpenStreetMap map." },
-  { label: "How it works", href: "/#how-it-works", description: "Plan, travel, arrive." },
+  { label: "Live route map", href: "/#live-route", description: "A sample journey on a free OpenFreeMap map." },
   { label: "Features", href: "/#features", description: "The main things Arrivo does." },
   { label: "Safety", href: "/#safety", description: "A safety net that respects your privacy." },
   { label: "For contacts", href: "/#for-contacts", description: "Peace of mind for the people who care." },

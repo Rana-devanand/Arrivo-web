@@ -634,7 +634,7 @@
 
 /* Big sliding line of promises. */
 .marquee-track {
-  animation: marquee 55s linear infinite;
+  animation: marquee 100s linear infinite;
 }
 @keyframes marquee {
   from {

@@ -351,8 +351,8 @@ export const heroShapes: readonly HeroShape[] = [
   { shape: "safe", word: "safe arrival" },
 ];
 
-/** The large sliding line under How it works. Each phrase is a promise the app actually keeps. */
-export const marqueePhrases: readonly string[] = ["Shared only while you travel", "You choose who sees", "Late? We ask you first", "Calm for those who wait"];
+/** The big words that drift across the full-screen band. Two words each. */
+export const marqueePhrases: readonly string[] = ["Calm & private", "Consent-first", "Honest status", "Safe arrivals"];
 
 /** The numbers on the About page are product facts, not statistics. */
 export const aboutStats = [

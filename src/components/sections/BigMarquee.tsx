@@ -15,10 +15,10 @@ function Phrases({ hidden = false }: { hidden?: boolean }) {
   );
 }
 
-/** A big line of promises that drifts across the page. The second copy only exists to make the loop seamless. */
+/** A full-screen band with big two-word values that drift slowly across the middle. The second copy only exists to make the loop seamless. */
 export function BigMarquee() {
   return (
-    <section aria-label="What Arrivo promises" className="overflow-hidden py-10 sm:py-16">
+    <section aria-label="What Arrivo stands for" className="flex min-h-svh items-center overflow-hidden">
       <div className="marquee-track flex w-max font-heading text-5xl font-bold tracking-tight text-foreground sm:text-7xl lg:text-8xl xl:text-9xl">
         <Phrases />
         <Phrases hidden />
