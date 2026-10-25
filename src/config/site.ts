@@ -3,11 +3,15 @@ export type SocialLink = { label: string; href: string };
 
 const url = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://tryarrivo.com").replace(/\/$/, "");
 
+/** The Arrivo API. The pricing page asks it to start a payment. */
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "https://arrivo-be.vercel.app").replace(/\/$/, "");
+
 const product = [
   { label: "Features", href: "/features", description: "Everything Arrivo can do, with real screens from the app." },
   { label: "How it works", href: "/how-it-works", description: "Six steps from setting off to arriving safely." },
   { label: "Safety", href: "/safety", description: "Honest status, the late-arrival check-in, and what Arrivo never does." },
   { label: "For contacts", href: "/for-contacts", description: "What a trusted contact sees and how to accept an invite." },
+  { label: "Pricing", href: "/pricing", description: "Arrivo Free and Arrivo Plus, paid monthly, every 6 months or yearly." },
 ] satisfies NavItem[];
 
 const help = [
@@ -41,6 +45,7 @@ const homeSections = [
 export const siteConfig = {
   name: "Arrivo",
   url,
+  apiUrl,
   tagline: "Share the journey. Celebrate the arrival.",
   description:
     "Arrivo is a travel-safety app for Android and iOS. Share a journey and live location with trusted contacts, and let them know the moment you arrive safely.",
@@ -62,6 +67,7 @@ export const siteConfig = {
     { label: "Features", href: "/features" },
     { label: "How it works", href: "/how-it-works" },
     { label: "Safety", href: "/safety" },
+    { label: "Pricing", href: "/pricing" },
     { label: "Contact", href: "/contact" },
     { label: "About us", href: "/about" },
   ] satisfies NavItem[],
@@ -75,4 +81,6 @@ export const sitemapPaths: readonly string[] = [
   ...siteConfig.footer.product.map((item) => item.href),
   ...siteConfig.footer.help.map((item) => item.href),
   ...siteConfig.footer.company.map((item) => item.href),
+  "/pricing/success",
+  "/pricing/cancelled",
 ];
