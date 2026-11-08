@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AccountApiError, startCheckout } from "@/components/account/accountApi";
-import type { BillingInfo } from "@/lib/account";
+import { discountedCents, type BillingInfo } from "@/lib/account";
 import {
   checkoutErrors,
   familyPlan,
@@ -38,7 +38,14 @@ function isSafeCheckoutUrl(value: unknown): value is string {
 
 type PricingPlansProps = {
   /** Given on the account dashboard: who is signed in and how to get their token. Leave out on the public page. */
-  account?: { billing: BillingInfo; getToken: () => Promise<string | null> };
+  account?: {
+    billing: BillingInfo;
+    getToken: () => Promise<string | null>;
+    /** An offer switched on for this payment: its code goes to the checkout, and the cards show the first payment after it. */
+    coupon?: { code: string; percentOff: number };
+    /** Called when the server says the offer is no longer available, so the page can look again. */
+    onOfferRejected?: () => void;
+  };
 };
 
 function ChangeHint({ canManage }: { canManage: boolean }) {
@@ -84,10 +91,11 @@ export function PricingPlans({ account }: PricingPlansProps) {
     setMessage("");
     if (signedIn) {
       try {
-        window.location.assign(await startCheckout(await signedIn.getToken(), plan));
+        window.location.assign(await startCheckout(await signedIn.getToken(), plan, signedIn.coupon?.code));
         return;
       } catch (error) {
         setMessage(error instanceof AccountApiError ? error.message : checkoutErrors.generic);
+        if (error instanceof AccountApiError && error.status === 400 && signedIn.coupon) signedIn.onOfferRejected?.();
         setStatus("error");
         return;
       }
@@ -110,6 +118,10 @@ export function PricingPlans({ account }: PricingPlansProps) {
     setStatus("error");
   }
 
+  // The offer only counts for someone who is about to pay; the payment partner works out the exact amount.
+  const coupon = signedIn && owned === "free" ? signedIn.coupon : undefined;
+  const offerLine = (c: typeof coupon, cents: number) =>
+    c ? `${c.percentOff}% off with ${c.code}: about ${usd(discountedCents(cents, c.percentOff))} on your first payment` : null;
   const plusLocal = localPrice(selected.priceCents, rates, country);
   const familyLocal = localPrice(familyPlan.priceCents, rates, country);
   const upgradeHint = (
@@ -174,6 +186,7 @@ export function PricingPlans({ account }: PricingPlansProps) {
               amount={usd(selected.priceCents)}
               per={selected.months === 1 ? "/mo" : `/${selected.months} mo`}
               local={plusLocal ? `${plusLocal} in ${country?.name}` : null}
+              offer={offerLine(coupon, selected.priceCents)}
               note={
                 selected.months === 1
                   ? "Taxes included. Cancel any time."
@@ -195,7 +208,7 @@ export function PricingPlans({ account }: PricingPlansProps) {
                   {status === "loading" && paying === "plus"
                     ? "Opening secure payment..."
                     : signedIn
-                      ? `Upgrade to Plus · ${usd(selected.priceCents)}`
+                      ? `Upgrade to Plus · ${coupon ? "about " + usd(discountedCents(selected.priceCents, coupon.percentOff)) : usd(selected.priceCents)}`
                       : `Continue to secure payment · ${usd(selected.priceCents)}`}
                 </Button>
                 <p role={status === "error" && paying === "plus" ? "alert" : undefined} aria-live="polite" className="min-h-6 text-xs text-muted-foreground">
@@ -224,6 +237,7 @@ export function PricingPlans({ account }: PricingPlansProps) {
               amount={usd(familyPlan.priceCents)}
               per="/year"
               local={familyLocal ? `${familyLocal} in ${country?.name}` : null}
+              offer={offerLine(coupon, familyPlan.priceCents)}
               note={`You and ${familyPlan.members} more people get Arrivo Plus. Taxes included.`}
             />
           }
@@ -238,7 +252,7 @@ export function PricingPlans({ account }: PricingPlansProps) {
             ) : ticket || signedIn ? (
               <>
                 <Button onClick={() => pay(familyPlan.key)} disabled={status === "loading"} variant="outline" size="sm" className="w-full">
-                  {status === "loading" && paying === "family" ? "Opening secure payment..." : `Get Plus Family · ${usd(familyPlan.priceCents)}`}
+                  {status === "loading" && paying === "family" ? "Opening secure payment..." : `Get Plus Family · ${coupon ? "about " + usd(discountedCents(familyPlan.priceCents, coupon.percentOff)) : usd(familyPlan.priceCents)}`}
                 </Button>
                 <p role={status === "error" && paying === "family" ? "alert" : undefined} aria-live="polite" className="min-h-6 text-xs text-muted-foreground">
                   {status === "error" && paying === "family" ? message : "You invite your 2 members in the app after paying."}

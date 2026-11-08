@@ -66,8 +66,18 @@ async function postForUrl(path: string, token: string | null, body: object, key:
   return url;
 }
 
-/** Starts a payment for the signed-in person and returns the secure page to pay on. */
-export const startCheckout = (token: string | null, plan: string) => postForUrl("/billing/checkout-session", token, { plan }, "checkoutUrl");
+/** Starts a payment for the signed-in person and returns the secure page to pay on. [coupon] is an offer code the person chose. */
+export const startCheckout = (token: string | null, plan: string, coupon?: string) =>
+  postForUrl("/billing/checkout-session", token, { plan, ...(coupon ? { coupon } : {}) }, "checkoutUrl");
 
 /** A link to the payment partner's portal: cancel, change card, invoices. */
 export const openPortal = (token: string | null) => postForUrl("/billing/portal", token, {}, "url");
+
+/** POSTs [body] to [path] and runs the answer through [parse], which returns null for a reply it does not understand. */
+export async function postJson<T>(path: string, token: string | null, body: object, parse: (json: unknown) => T | null): Promise<T> {
+  const res = await send(path, token, { method: "POST", body: JSON.stringify(body) });
+  if (!res.ok) throw await failure(res);
+  const parsed = parse(await res.json().catch(() => null));
+  if (parsed === null) throw new AccountApiError(res.status, GENERIC);
+  return parsed;
+}

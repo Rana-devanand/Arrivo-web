@@ -23,7 +23,7 @@ export function JourneyList({ items }: { items: readonly JourneyItem[] }) {
           <Panel as="li" key={j.id} className="flex flex-wrap items-center gap-x-4 gap-y-3">
             <IconTile name={modeIcon(j.mode)} />
             <div className="min-w-0 flex-1 basis-48">
-              <p className="break-words font-semibold">
+              <p className="break-words text-sm font-semibold">
                 {j.originName ? `${j.originName} to ` : "To "}
                 {j.destinationName || "your destination"}
               </p>

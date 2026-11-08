@@ -259,3 +259,123 @@ export function initials(name: string, email: string): string {
   const letters = parts.length > 1 ? `${parts[0]![0]}${parts[parts.length - 1]![0]}` : (parts[0] ?? email).slice(0, 2);
   return letters.toUpperCase();
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Discount offers. An admin makes them; people see the ones that are live and can use one when they pay.
+// ---------------------------------------------------------------------------------------------------------------
+
+/** An offer as signed-in people see it: only what the card needs. */
+export type Offer = { code: string; title: string; percentOff: number; endsAt: string };
+export type OfferStatus = "scheduled" | "live" | "ended";
+/** An offer as the admin sees it. */
+export type AdminOffer = Offer & { id: string; startsAt: string; status: OfferStatus; createdAt: string };
+
+const OFFER_STATUSES: OfferStatus[] = ["scheduled", "live", "ended"];
+
+function offerOf(raw: unknown): Offer | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const o = raw as Record<string, unknown>;
+  const percent = o.percentOff;
+  if (typeof o.code !== "string" || !o.code || !isNumber(percent) || percent < 1 || percent > 100) return null;
+  return { code: o.code, title: text(o.title), percentOff: Math.round(percent), endsAt: text(o.endsAt) };
+}
+
+/** Turns `GET /v1/billing/offers` into the offers that are live now, or null. */
+export function parseOffers(json: unknown): Offer[] | null {
+  if (typeof json !== "object" || json === null) return null;
+  const list = (json as Record<string, unknown>).offers;
+  if (!Array.isArray(list)) return null;
+  return list.map(offerOf).filter((o): o is Offer => o !== null);
+}
+
+/** One offer from the admin API (the list, or the answer to making or ending one), or null. */
+export function parseAdminOffer(raw: unknown): AdminOffer | null {
+  const base = offerOf(raw);
+  if (!base || typeof raw !== "object" || raw === null) return null;
+  const o = raw as Record<string, unknown>;
+  const status = OFFER_STATUSES.find((x) => x === o.status);
+  const id = text(o.id);
+  if (!status || !id) return null;
+  return { ...base, id, startsAt: text(o.startsAt), status, createdAt: text(o.createdAt) };
+}
+
+/** Turns `GET /v1/admin/coupons` into every offer, newest first, or null. */
+export function parseAdminOffers(json: unknown): AdminOffer[] | null {
+  if (typeof json !== "object" || json === null) return null;
+  const list = (json as Record<string, unknown>).coupons;
+  if (!Array.isArray(list)) return null;
+  return list.map(parseAdminOffer).filter((o): o is AdminOffer => o !== null);
+}
+
+/** "Ends in 5 h 12 min", or "Ended" once the time has come. */
+export function offerEndsText(endsAt: string, nowMs: number): string {
+  const end = Date.parse(endsAt);
+  if (Number.isNaN(end) || end <= nowMs) return "Ended";
+  return "Ends in " + durationText(Math.ceil((end - nowMs) / 60000));
+}
+
+/** The price after taking [percentOff] percent off, in cents. An estimate: the payment partner works out the exact amount. */
+export function discountedCents(cents: number, percentOff: number): number {
+  const p = Math.min(100, Math.max(0, percentOff));
+  return Math.round((cents * (100 - p)) / 100);
+}
+
+export function offerStatusLook(status: OfferStatus): { label: string; tone: Tone; icon: "checkCircle" | "clock" | "circleX" } {
+  switch (status) {
+    case "live":
+      return { label: "Live", tone: "good", icon: "checkCircle" };
+    case "scheduled":
+      return { label: "Scheduled", tone: "warn", icon: "clock" };
+    default:
+      return { label: "Ended", tone: "quiet", icon: "circleX" };
+  }
+}
+
+export type OfferUnit = "minutes" | "hours" | "days";
+
+const UNIT_MINUTES: Record<OfferUnit, number> = { minutes: 1, hours: 60, days: 24 * 60 };
+
+/** How long an offer lasts, in minutes, from "3" and "days". */
+export const offerMinutes = (amount: number, unit: OfferUnit): number => amount * UNIT_MINUTES[unit];
+
+const MIN_OFFER_MINUTES = 5;
+const MAX_OFFER_MINUTES = 366 * 24 * 60;
+
+/** What the code box keeps of what was typed: capital letters and digits, up to 16. */
+export const normaliseCode = (value: string): string => value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 16);
+
+export type OfferForm = { title: string; code: string; percentOff: number; startsAtMs: number | null; minutes: number };
+
+/** The first thing wrong with a new offer, in words, or null. The server checks the same rules again. */
+export function validateOffer(f: OfferForm, nowMs: number): string | null {
+  const title = f.title.trim();
+  if (title.length < 3 || title.length > 60) return "Give the offer a name (3 to 60 letters).";
+  if (!/^[A-Z0-9]{3,16}$/.test(f.code.trim().toUpperCase())) return "The code is 3 to 16 capital letters or digits.";
+  if (!Number.isInteger(f.percentOff) || f.percentOff < 1 || f.percentOff > 90) return "The discount is 1 to 90 percent.";
+  if (!Number.isFinite(f.minutes) || f.minutes < MIN_OFFER_MINUTES) return "An offer must run for at least 5 minutes.";
+  if (f.minutes > MAX_OFFER_MINUTES) return "An offer can run for 366 days at most.";
+  if (f.startsAtMs !== null) {
+    if (!Number.isFinite(f.startsAtMs)) return "Pick a valid start time.";
+    if (f.startsAtMs < nowMs - 60_000) return "The start time cannot be in the past.";
+  }
+  return null;
+}
+
+/** The start (left out for "now") and the end of an offer, as the API wants them. */
+export function offerWindow(nowMs: number, startsAtMs: number | null, minutes: number): { startsAt?: string; endsAt: string } {
+  const start = startsAtMs ?? nowMs;
+  return { ...(startsAtMs === null ? {} : { startsAt: new Date(startsAtMs).toISOString() }), endsAt: new Date(start + minutes * 60_000).toISOString() };
+}
+
+/** When several offers are live, the one that takes the most off. */
+export function bestOffer(offers: readonly Offer[]): Offer | null {
+  return offers.reduce<Offer | null>((best, o) => (!best || o.percentOff > best.percentOff ? o : best), null);
+}
+
+/** Where an offer stands right now. The server"s word was true when it was sent; as time passes a live offer ends and a scheduled one starts. */
+export function effectiveOfferStatus(o: Pick<AdminOffer, "status" | "startsAt" | "endsAt">, nowMs: number): OfferStatus {
+  if (o.status === "ended" || nowMs >= Date.parse(o.endsAt)) return "ended";
+  // A live offer the server just reported stays live, even if the clock here is a moment behind its start.
+  if (o.status === "live" || nowMs >= Date.parse(o.startsAt)) return "live";
+  return "scheduled";
+}

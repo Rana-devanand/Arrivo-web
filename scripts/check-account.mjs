@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  bestOffer,
   billingPeriod,
   contactsLeft,
   contactsPercent,
@@ -8,15 +9,26 @@ import {
   durationText,
   firstName,
   formatDay,
+  discountedCents,
+  effectiveOfferStatus,
   initials,
   journeyCounts,
   journeyLook,
   journeyMinutes,
   modeIcon,
+  normaliseCode,
+  offerEndsText,
+  offerMinutes,
+  offerStatusLook,
+  offerWindow,
   parseBilling,
+  parseAdminOffer,
+  parseAdminOffers,
   parseJourneys,
+  parseOffers,
   safeReturnPath,
   statusSummary,
+  validateOffer,
 } from "../src/lib/account.ts";
 
 const NOW = Date.parse("2026-11-08T10:00:00Z");
@@ -213,4 +225,107 @@ test("names: a greeting and avatar letters, even without a name", () => {
   assert.equal(initials("Asha Rao", "a@x.test"), "AR");
   assert.equal(initials("Asha", "a@x.test"), "AS");
   assert.equal(initials("", "zed@x.test"), "ZE");
+});
+
+test("parseOffers keeps only what the offer card needs", () => {
+  const out = parseOffers({ offers: [{ code: "LAUNCH20", title: "Launch offer", percentOff: 20, endsAt: "2026-11-10T10:00:00Z", dodoDiscountId: "dsc_1", startsAt: "x" }, { code: "", percentOff: 10 }, { code: "BAD", percentOff: 0 }, { code: "HUGE", percentOff: 200 }, "nope"] });
+  assert.equal(out.length, 1);
+  assert.deepEqual(out[0], { code: "LAUNCH20", title: "Launch offer", percentOff: 20, endsAt: "2026-11-10T10:00:00Z" });
+  assert.ok(!JSON.stringify(out).includes("dsc_1"));
+  assert.deepEqual(parseOffers({ offers: [] }), []);
+  assert.equal(parseOffers({}), null);
+  assert.equal(parseOffers(null), null);
+});
+
+test("parseAdminOffer(s) read the admin's list and the answer to making or ending an offer", () => {
+  const one = { id: "c1", code: "LAUNCH20", title: "Launch", percentOff: 20, startsAt: "2026-11-09T00:00:00Z", endsAt: "2026-11-10T00:00:00Z", status: "live", createdAt: "2026-11-09T00:00:00Z" };
+  assert.equal(parseAdminOffer(one).status, "live");
+  assert.equal(parseAdminOffer({ ...one, status: "weird" }), null);
+  assert.equal(parseAdminOffer({ ...one, id: "" }), null);
+  assert.equal(parseAdminOffers({ coupons: [one, { ...one, id: "c2", status: "ended" }, "x"] }).length, 2);
+  assert.equal(parseAdminOffers({}), null);
+});
+
+test("an offer says how long is left, and Ended when the time has come", () => {
+  const now = Date.parse("2026-11-09T10:00:00Z");
+  assert.equal(offerEndsText("2026-11-09T10:45:00Z", now), "Ends in 45 min");
+  assert.equal(offerEndsText("2026-11-09T15:12:00Z", now), "Ends in 5 h 12 min");
+  assert.equal(offerEndsText("2026-11-11T11:00:00Z", now), "Ends in 2 days 1 h");
+  assert.equal(offerEndsText("2026-11-09T10:00:00Z", now), "Ended");
+  assert.equal(offerEndsText("2026-11-08T10:00:00Z", now), "Ended");
+  assert.equal(offerEndsText("nonsense", now), "Ended");
+});
+
+test("discountedCents takes the percentage off, rounded, and stays in range", () => {
+  assert.equal(discountedCents(2499, 20), 1999);
+  assert.equal(discountedCents(4900, 25), 3675);
+  assert.equal(discountedCents(299, 33), 200);
+  assert.equal(discountedCents(2499, 0), 2499);
+  assert.equal(discountedCents(2499, 100), 0);
+  assert.equal(discountedCents(2499, 150), 0);
+  assert.equal(discountedCents(2499, -5), 2499);
+});
+
+test("each offer status has a word, a tone and an icon", () => {
+  assert.deepEqual(offerStatusLook("live"), { label: "Live", tone: "good", icon: "checkCircle" });
+  assert.deepEqual(offerStatusLook("scheduled"), { label: "Scheduled", tone: "warn", icon: "clock" });
+  assert.deepEqual(offerStatusLook("ended"), { label: "Ended", tone: "quiet", icon: "circleX" });
+});
+
+test("the code box keeps capital letters and digits only, up to 16", () => {
+  assert.equal(normaliseCode("launch 20!"), "LAUNCH20");
+  assert.equal(normaliseCode("a-b_c"), "ABC");
+  assert.equal(normaliseCode("x".repeat(30)).length, 16);
+  assert.equal(normaliseCode(""), "");
+});
+
+test("validateOffer names the first thing wrong, with the same rules as the server", () => {
+  const now = Date.parse("2026-11-09T10:00:00Z");
+  const ok = { title: "Launch offer", code: "LAUNCH20", percentOff: 20, startsAtMs: null, minutes: offerMinutes(1, "days") };
+  assert.equal(validateOffer(ok, now), null);
+  assert.equal(validateOffer({ ...ok, code: "launch20" }, now), null);
+  assert.match(validateOffer({ ...ok, title: "x" }, now), /name/);
+  assert.match(validateOffer({ ...ok, title: "x".repeat(61) }, now), /name/);
+  assert.match(validateOffer({ ...ok, code: "ab" }, now), /code/);
+  assert.match(validateOffer({ ...ok, code: "has space" }, now), /code/);
+  assert.match(validateOffer({ ...ok, percentOff: 0 }, now), /1 to 90/);
+  assert.match(validateOffer({ ...ok, percentOff: 91 }, now), /1 to 90/);
+  assert.match(validateOffer({ ...ok, percentOff: 12.5 }, now), /1 to 90/);
+  assert.match(validateOffer({ ...ok, minutes: 4 }, now), /5 minutes/);
+  assert.match(validateOffer({ ...ok, minutes: Number.NaN }, now), /5 minutes/);
+  assert.match(validateOffer({ ...ok, minutes: offerMinutes(367, "days") }, now), /366 days/);
+  assert.equal(validateOffer({ ...ok, minutes: offerMinutes(366, "days") }, now), null);
+  assert.match(validateOffer({ ...ok, startsAtMs: now - 3600_000 }, now), /past/);
+  assert.match(validateOffer({ ...ok, startsAtMs: Number.NaN }, now), /valid start/);
+  assert.equal(validateOffer({ ...ok, startsAtMs: now + 3600_000 }, now), null);
+});
+
+test("offerWindow gives the start (only when scheduled) and the end", () => {
+  const now = Date.parse("2026-11-09T10:00:00Z");
+  assert.deepEqual(offerWindow(now, null, 90), { endsAt: "2026-11-09T11:30:00.000Z" });
+  const later = Date.parse("2026-11-10T08:00:00Z");
+  assert.deepEqual(offerWindow(now, later, offerMinutes(2, "days")), { startsAt: "2026-11-10T08:00:00.000Z", endsAt: "2026-11-12T08:00:00.000Z" });
+  assert.equal(offerMinutes(3, "hours"), 180);
+  assert.equal(offerMinutes(2, "days"), 2880);
+});
+
+test("bestOffer picks the biggest discount, and nothing when there is none", () => {
+  const a = { code: "A", title: "a", percentOff: 10, endsAt: "x" };
+  const b = { code: "B", title: "b", percentOff: 30, endsAt: "x" };
+  const c = { code: "C", title: "c", percentOff: 20, endsAt: "x" };
+  assert.equal(bestOffer([a, b, c]).code, "B");
+  assert.equal(bestOffer([a]).code, "A");
+  assert.equal(bestOffer([]), null);
+});
+
+test("an offer's standing moves with the clock, and an ended offer never comes back", () => {
+  const o = { status: "scheduled", startsAt: "2026-11-09T10:00:00Z", endsAt: "2026-11-09T12:00:00Z" };
+  const at = (iso) => Date.parse(iso);
+  assert.equal(effectiveOfferStatus(o, at("2026-11-09T09:00:00Z")), "scheduled");
+  assert.equal(effectiveOfferStatus(o, at("2026-11-09T10:00:00Z")), "live");
+  assert.equal(effectiveOfferStatus({ ...o, status: "live" }, at("2026-11-09T11:59:59Z")), "live");
+  assert.equal(effectiveOfferStatus({ ...o, status: "live" }, at("2026-11-09T12:00:00Z")), "ended");
+  assert.equal(effectiveOfferStatus({ ...o, status: "ended" }, at("2026-11-09T11:00:00Z")), "ended");
+  // Just made: the server says live, the local clock is a moment before the start.
+  assert.equal(effectiveOfferStatus({ ...o, status: "live" }, at("2026-11-09T09:59:59Z")), "live");
 });

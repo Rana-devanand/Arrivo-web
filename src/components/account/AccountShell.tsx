@@ -9,6 +9,7 @@ import { AccountFrame } from "./AccountFrame";
 import { AccountMobileBar } from "./AccountMobileBar";
 import { AccountNav } from "./AccountNav";
 import { AccountProvider, useAccount } from "./AccountProvider";
+import { AccountTopBar } from "./AccountTopBar";
 import { AccountUserBar } from "./AccountUserBar";
 import { DashboardSkeleton } from "./DashboardSkeleton";
 import { SignInPanel } from "./SignInPanel";
@@ -37,7 +38,7 @@ function Gate({ children }: { children: ReactNode }) {
 
   if (auth.status === "signedIn") {
     return (
-      <AccountFrame topBar={<AccountMobileBar />} menu={<AccountNav />} user={<AccountUserBar />}>
+      <AccountFrame mobileBar={<AccountMobileBar />} menu={<AccountNav />} user={<AccountUserBar />} header={<AccountTopBar />}>
         {children}
       </AccountFrame>
     );

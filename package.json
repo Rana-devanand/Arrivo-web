@@ -12,7 +12,8 @@
     "check:seo": "node scripts/check-seo.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:watch": "node --test scripts/check-watch.mjs",
-    "check:account": "node --test scripts/check-account.mjs"
+    "check:account": "node --test scripts/check-account.mjs",
+    "check:admin": "node --test scripts/check-admin.mjs"
   },
   "dependencies": {
     "@lordicon/element": "^3.0.2",

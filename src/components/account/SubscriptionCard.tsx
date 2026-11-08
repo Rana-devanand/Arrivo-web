@@ -41,10 +41,10 @@ export function SubscriptionCard({ billing }: { billing: BillingInfo }) {
         <div className="flex items-center gap-3">
           <IconTile name="creditCard" />
           <div>
-            <Heading level={2} size={3} id="subscription-title" className="text-sm text-muted-foreground">
+            <Heading level={2} size={6} id="subscription-title" className="text-muted-foreground">
               Your subscription
             </Heading>
-            <p className="text-xl font-bold">{billing.name}</p>
+            <p className="text-lg font-bold leading-tight">{billing.name}</p>
           </div>
         </div>
         <StatusPill label={summary.label} tone={summary.tone} icon={PILL_ICONS[summary.tone]} />

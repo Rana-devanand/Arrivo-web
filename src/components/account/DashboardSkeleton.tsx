@@ -1,11 +1,12 @@
 import { Skeleton } from "@/components/ui/Skeleton";
 import { AccountFrame } from "./AccountFrame";
+import { BodyLoader } from "./BodyLoader";
 
-/** The dashboard's shape in grey blocks, shown while we find out whether someone is signed in. */
+/** The dashboard's frame in grey blocks and the loader in the middle of the body, shown while we find out whether someone is signed in. */
 export function DashboardSkeleton() {
   return (
     <AccountFrame
-      topBar={
+      mobileBar={
         <div className="flex items-center justify-between">
           <Skeleton className="h-8 w-28" />
           <Skeleton className="size-11" />
@@ -22,25 +23,20 @@ export function DashboardSkeleton() {
         </div>
       }
       user={<Skeleton className="h-14 w-full" />}
+      header={
+        <div className="border-b border-border bg-card px-4 py-3 sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full max-w-5xl items-center gap-3">
+            <Skeleton className="size-10 shrink-0" />
+            <div className="grid gap-2">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-5 w-40" />
+            </div>
+          </div>
+        </div>
+      }
     >
-      <div aria-busy="true">
-        <h1 className="sr-only">Your Arrivo account</h1>
-        <p role="status" className="sr-only">
-          Loading your account
-        </p>
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="mt-3 h-10 w-56" />
-        <Skeleton className="mt-3 h-5 w-72 max-w-full" />
-        <div className="mt-8 grid gap-4 lg:grid-cols-3">
-          <Skeleton className="h-44 rounded-2xl lg:col-span-2" />
-          <Skeleton className="h-44 rounded-2xl" />
-        </div>
-        <div className="mt-4 grid grid-cols-3 gap-4">
-          <Skeleton className="h-20 rounded-2xl" />
-          <Skeleton className="h-20 rounded-2xl" />
-          <Skeleton className="h-20 rounded-2xl" />
-        </div>
-      </div>
+      <h1 className="sr-only">Your Arrivo account</h1>
+      <BodyLoader />
     </AccountFrame>
   );
 }

@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
-import { accountMenu } from "./accountMenu";
+import { useAccount } from "./AccountProvider";
+import { accountMenu, adminMenu, type MenuItem } from "./accountMenu";
 
-/** The account menu as a vertical list of links, each with an icon tile. The current page is filled in. */
-export function AccountMenuLinks() {
-  const pathname = usePathname();
+function Group({ items, pathname }: { items: readonly MenuItem[]; pathname: string }) {
   return (
     <ul className="flex flex-col gap-1">
-      {accountMenu.map((item) => {
+      {items.map((item) => {
         const active = pathname === item.href;
         return (
           <li key={item.href}>
@@ -31,5 +30,22 @@ export function AccountMenuLinks() {
         );
       })}
     </ul>
+  );
+}
+
+/** The account menu as vertical lists of links, each with an icon tile; admins get a second list. The current page is filled in. */
+export function AccountMenuLinks() {
+  const pathname = usePathname();
+  const { isAdmin } = useAccount();
+  return (
+    <div className="grid gap-5">
+      <Group items={accountMenu} pathname={pathname} />
+      {isAdmin ? (
+        <div>
+          <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Admin</p>
+          <Group items={adminMenu} pathname={pathname} />
+        </div>
+      ) : null}
+    </div>
   );
 }

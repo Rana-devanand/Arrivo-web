@@ -4,101 +4,79 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/Heading";
 import { IconTile } from "@/components/ui/IconTile";
 import { Panel } from "@/components/ui/Panel";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { firstName, journeyCounts, parseBilling, parseJourneys } from "@/lib/account";
-import { AccountHeader } from "./AccountHeader";
+import { bestOffer, journeyCounts, parseJourneys, parseOffers } from "@/lib/account";
 import { useAccount } from "./AccountProvider";
+import { BodyLoader } from "./BodyLoader";
 import { ContactsCard } from "./ContactsCard";
 import { JourneyList } from "./JourneyList";
 import { JourneyStats } from "./JourneyStats";
 import { JourneysEmpty } from "./JourneysEmpty";
+import { OfferCard } from "./OfferCard";
 import { ResourceView } from "./ResourceView";
 import { SubscriptionCard } from "./SubscriptionCard";
 import { useAccountResource } from "./useAccountResource";
 
 const RECENT = 5;
 
-/** The dashboard: subscription status and contacts, journey numbers, and the latest journeys. */
+/** The dashboard: a live offer if there is one, the subscription and contacts, journey numbers, and the latest journeys. */
 export function AccountOverview() {
-  const { auth } = useAccount();
-  const billing = useAccountResource("/billing/me", parseBilling);
+  const { billing, reloadBilling } = useAccount();
   const journeys = useAccountResource("/journeys?limit=50", parseJourneys);
-  const name = auth.status === "signedIn" ? firstName(auth.user.name, auth.user.email) : "";
+  const offers = useAccountResource("/billing/offers", parseOffers);
+  const offer = offers.state.status === "ready" ? bestOffer(offers.state.data) : null;
+
+  // One loader for the whole body, not one per card.
+  if (billing.status === "loading" || journeys.state.status === "loading") return <BodyLoader />;
 
   return (
-    <>
-      <AccountHeader title="Dashboard" subtitle={name ? `Hi ${name}. Here is your plan and your latest journeys.` : "Here is your plan and your latest journeys."} />
-
-      <div className="grid gap-6">
-        <ResourceView
-          state={billing.state}
-          onRetry={billing.reload}
-          skeleton={
-            <div className="grid gap-4 lg:grid-cols-3">
-              <Skeleton className="h-48 rounded-2xl lg:col-span-2" />
-              <Skeleton className="h-48 rounded-2xl" />
-            </div>
-          }
-        >
-          {(b) => (
+    <div className="grid gap-5">
+      <ResourceView state={billing} onRetry={reloadBilling}>
+        {(b) => (
+          <>
+            {/* An offer only helps someone who has not paid yet: a paid plan is changed in Manage subscription. */}
+            {offer && (b.plan === "free" || b.familyOwner) ? <OfferCard offer={offer} href="/account/plan" actionLabel="Upgrade with this offer" /> : null}
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <SubscriptionCard billing={b} />
               </div>
               <ContactsCard billing={b} />
             </div>
-          )}
-        </ResourceView>
+          </>
+        )}
+      </ResourceView>
 
-        <ResourceView
-          state={journeys.state}
-          onRetry={journeys.reload}
-          skeleton={
-            <div className="grid gap-3">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <Skeleton className="h-20 rounded-2xl" />
-                <Skeleton className="h-20 rounded-2xl" />
-                <Skeleton className="h-20 rounded-2xl" />
-              </div>
-              <Skeleton className="mt-3 h-6 w-40" />
-              <Skeleton className="h-20 rounded-2xl" />
-              <Skeleton className="h-20 rounded-2xl" />
-              <Skeleton className="h-20 rounded-2xl" />
-            </div>
-          }
-        >
-          {({ items, more }) => {
-            const counts = journeyCounts(items);
-            const running = items.find((j) => j.status === "active" || j.status === "overdue");
-            return (
-              <>
-                <JourneyStats counts={counts} more={more} />
-                {running ? (
-                  <Panel role="status" className="flex items-center gap-3">
-                    <IconTile name="navigation" />
-                    <p>
-                      A journey to <b>{running.destinationName || "your destination"}</b> is in progress. Open the Arrivo app to see it live.
-                    </p>
-                  </Panel>
-                ) : null}
-                <section aria-labelledby="recent-title">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <Heading level={2} size={3} id="recent-title">
-                      Latest journeys
-                    </Heading>
-                    {items.length > RECENT ? (
-                      <Link href="/account/journeys" className="text-sm font-semibold underline">
-                        See all journeys
-                      </Link>
-                    ) : null}
-                  </div>
-                  {items.length === 0 ? <JourneysEmpty /> : <JourneyList items={items.slice(0, RECENT)} />}
-                </section>
-              </>
-            );
-          }}
-        </ResourceView>
-      </div>
-    </>
+      <ResourceView state={journeys.state} onRetry={journeys.reload}>
+        {({ items, more }) => {
+          const counts = journeyCounts(items);
+          const running = items.find((j) => j.status === "active" || j.status === "overdue");
+          return (
+            <>
+              <JourneyStats counts={counts} more={more} />
+              {running ? (
+                <Panel role="status" className="flex items-center gap-3">
+                  <IconTile name="navigation" />
+                  <p>
+                    A journey to <b>{running.destinationName || "your destination"}</b> is in progress. Open the Arrivo app to see it live.
+                  </p>
+                </Panel>
+              ) : null}
+              <section aria-labelledby="recent-title">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <Heading level={2} size={6} id="recent-title" className="text-muted-foreground">
+                    Latest journeys
+                  </Heading>
+                  {items.length > RECENT ? (
+                    <Link href="/account/journeys" className="text-xs font-semibold underline">
+                      See all journeys
+                    </Link>
+                  ) : null}
+                </div>
+                {items.length === 0 ? <JourneysEmpty /> : <JourneyList items={items.slice(0, RECENT)} />}
+              </section>
+            </>
+          );
+        }}
+      </ResourceView>
+    </div>
   );
 }

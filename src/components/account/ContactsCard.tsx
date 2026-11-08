@@ -12,10 +12,10 @@ export function ContactsCard({ billing }: { billing: BillingInfo }) {
       <div className="flex items-center gap-3">
         <IconTile name="users" />
         <div>
-          <Heading level={2} size={3} id="contacts-title" className="text-sm text-muted-foreground">
+          <Heading level={2} size={6} id="contacts-title" className="text-muted-foreground">
             Trusted contacts
           </Heading>
-          <p className="text-xl font-bold">
+          <p className="text-lg font-bold leading-tight">
             {billing.contactsUsed}
             <span className="text-base font-semibold text-muted-foreground"> of {billing.contactLimit} used</span>
           </p>
