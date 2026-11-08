@@ -23,6 +23,14 @@
   --spot: #5aa9d6;
   --highlight: #1670a8;
 
+  /* Journey status on the live watch page. Always paired with an icon and words, never colour alone. */
+  --success: #1b6e3c;
+  --success-foreground: #ffffff;
+  --warning: #f5c542;
+  --warning-foreground: #000000;
+  --danger: #b3261e;
+  --danger-foreground: #ffffff;
+
   /* Map colours, applied on top of the free OpenFreeMap style (see src/lib/map.ts). */
   --map-land: #eef0f4;
   --map-residential: #e8ecf2;
@@ -68,6 +76,12 @@
   --color-border: var(--border);
   --color-nav: var(--nav);
   --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
 
   --radius-sm: calc(var(--radius) - 0.25rem);
   --radius-md: var(--radius);

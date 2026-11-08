@@ -19,9 +19,18 @@
 
 }
 
-
 @theme inline {
   --animate-hero-fade: hero-fade 36s linear infinite;
+  --animate-sheet-up: sheet-up 280ms ease-out;
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
 
   @keyframes hero-fade {
     0% {
@@ -652,59 +661,6 @@
     animation: none;
   }
   .marquee-copy[aria-hidden="true"] {
-    display: none;
-  }
-}
-
-/* Custom cursor: a dot on the pointer and a ring that trails it. Hidden on touch and for reduced motion. */
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-  border-radius: 9999px;
-  pointer-events: none;
-  opacity: 0;
-}
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
-  background: var(--highlight);
-  transition: opacity 0.3s;
-}
-.cursor-ring {
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  border: 1.5px solid color-mix(in srgb, var(--foreground) 35%, transparent);
-  transition:
-    width 0.45s ease,
-    height 0.45s ease,
-    margin 0.45s ease,
-    scale 0.2s ease,
-    opacity 0.3s,
-    background-color 0.45s,
-    border-color 0.45s;
-}
-.cursor-dot.is-visible,
-.cursor-ring.is-visible {
-  opacity: 1;
-}
-.cursor-ring.is-hover {
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
-  border-color: var(--highlight);
-  background: color-mix(in srgb, var(--highlight) 10%, transparent);
-}
-.cursor-ring.is-down {
-  scale: 0.85;
-}
-@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .cursor-dot,
-  .cursor-ring {
     display: none;
   }
 }

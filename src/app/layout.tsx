@@ -4,8 +4,8 @@ import { siteConfig } from "@/config/site";
 import { organizationJsonLd } from "@/lib/json-ld";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { HideInAccount } from "@/components/layout/HideInAccount";
 import { PageLoader } from "@/components/layout/PageLoader";
-import { CustomCursor } from "@/components/ui/CustomCursor";
 import { JsonLd } from "@/components/ui/JsonLd";
 import "./globals.css";
 
@@ -49,17 +49,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to main content
         </a>
-        <PageLoader />
-        <CustomCursor />
+        <HideInAccount>
+          <PageLoader />
+        </HideInAccount>
         <noscript>
           <style>{"#page-loader{display:none}"}</style>
         </noscript>
         <JsonLd data={organizationJsonLd} />
-        <Header />
+        <HideInAccount>
+          <Header />
+        </HideInAccount>
         <main id="main" className="flex-1">
           {children}
         </main>
-        <Footer />
+        <HideInAccount>
+          <Footer />
+        </HideInAccount>
       </body>
     </html>
   );

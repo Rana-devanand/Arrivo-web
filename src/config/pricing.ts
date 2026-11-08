@@ -2,6 +2,9 @@ import type { Faq } from "./content";
 
 export type BillingPlanKey = "monthly" | "sixMonths" | "yearly";
 
+/** Every key the checkout accepts: the three ways of paying for Plus, and Arrivo Plus Family. */
+export type CheckoutPlanKey = BillingPlanKey | "familyYearly";
+
 export type Interval = {
   key: BillingPlanKey;
   label: string;
@@ -64,8 +67,8 @@ export function localPrice(cents: number, rates: PriceRates | null, country: Pri
 
 export const pricingHead = {
   eyebrow: "Pricing",
-  title: "Arrivo Free and Arrivo Plus",
-  intro: "Start free with one trusted contact. Go Plus when your whole family wants to be looked after.",
+  title: "Arrivo Free, Plus and Plus Family",
+  intro: "Start free with one trusted contact. Go Plus for more contacts, or Plus Family to give Plus to two people you care about.",
 } as const;
 
 export const freePlan = {
@@ -87,7 +90,25 @@ export const plusPlan = {
   features: [
     "Everything in Arrivo Free",
     "Up to 10 trusted contacts",
-    "Family household: make a family circle and add everyone to a journey in one tap",
+    "Family circle: add your whole family to a journey in one tap",
+  ],
+} as const;
+
+/**
+ * Arrivo Plus Family: the owner pays once a year and shares Plus with 2 people invited by email. The price
+ * must equal the Dodo product's price and `PRICES_USD_CENTS.familyYearly` in the API (`backend/src/domain/plans.ts`).
+ */
+export const familyPlan = {
+  key: "familyYearly",
+  name: "Arrivo Plus Family",
+  tagline: "Arrivo Plus for you and 2 people you choose, for a year.",
+  priceCents: 4900,
+  members: 2,
+  features: [
+    "Everything in Arrivo Plus, for you",
+    "Arrivo Plus for 2 more people you invite by email",
+    "Each member uses their own Arrivo account",
+    "Paid once a year",
   ],
 } as const;
 
@@ -115,7 +136,13 @@ export const pricingFaqs: readonly Faq[] = [
     group: "Account",
     question: "What happens to my contacts if Plus ends?",
     answer:
-      "Nothing is deleted. You keep the contacts and the household you already made, but you cannot add more than one contact on Arrivo Free, and the household cannot be edited until you are on Plus again.",
+      "Nothing is deleted. You keep the contacts and the family circle you already made, but you cannot add more than one contact on Arrivo Free, and the circle cannot be edited until you are on Plus again.",
+  },
+  {
+    group: "Account",
+    question: "How does Arrivo Plus Family work?",
+    answer:
+      "You pay once a year and get Arrivo Plus. In the app, under Profile and Subscription, you invite up to 2 people by email. Each of them accepts in their own Arrivo account and gets Arrivo Plus too, for as long as your plan is paid. People who accepted stay on your plan for the whole year.",
   },
   {
     group: "Account",

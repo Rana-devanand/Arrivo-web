@@ -3,8 +3,9 @@ export type SocialLink = { label: string; href: string };
 
 const url = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://tryarrivo.com").replace(/\/$/, "");
 
-/** The Arrivo API. The pricing page asks it to start a payment. */
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "https://arrivo-be.vercel.app").replace(/\/$/, "");
+/** The Arrivo API: the pricing page starts payments with it and the watch page reads live journeys from it. `npm run dev` talks to the API on this machine (port 4000); a build talks to the live one. */
+const defaultApiUrl = process.env.NODE_ENV === "development" ? "http://localhost:4000" : "https://arrivo-be.vercel.app";
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, "");
 
 const product = [
   { label: "Features", href: "/features", description: "Everything Arrivo can do, with real screens from the app." },

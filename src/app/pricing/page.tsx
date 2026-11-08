@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { payHow, pricingFaqs, pricingHead } from "@/config/pricing";
 import { faqJsonLd } from "@/lib/json-ld";
 import { buildMetadata } from "@/lib/seo";
+import { EstimatePicker } from "@/components/pricing/EstimatePicker";
+import { PriceEstimateProvider } from "@/components/pricing/PriceEstimateProvider";
 import { FaqList } from "@/components/ui/FaqList";
 import { JsonLd } from "@/components/ui/JsonLd";
 import { Section } from "@/components/ui/Section";
@@ -23,12 +25,20 @@ export default function PricingPage() {
     <>
       <JsonLd data={faqJsonLd(pricingFaqs)} />
       <PageHero eyebrow={pricingHead.eyebrow} title={pricingHead.title} intro={pricingHead.intro} />
-      <Section id="plans" title="Choose your plan" intro="Prices are in US dollars and include taxes. See an estimate in your own currency below. You can change or cancel at any time.">
-        {/* The ticket in the address is read in the browser, so the rest of the page stays static. */}
-        <Suspense fallback={<div className="min-h-[40rem]" aria-hidden="true" />}>
-          <PricingPlans />
-        </Suspense>
-      </Section>
+      {/* The provider is shared by the picker next to the heading and the cards below it. */}
+      <PriceEstimateProvider>
+        <Section
+          id="plans"
+          title="Choose your plan"
+          intro="Prices are in US dollars and include taxes. See an estimate in your own currency. You can change or cancel at any time."
+          aside={<EstimatePicker />}
+        >
+          {/* The ticket in the address is read in the browser, so the rest of the page stays static. */}
+          <Suspense fallback={<div className="min-h-[40rem]" aria-hidden="true" />}>
+            <PricingPlans />
+          </Suspense>
+        </Section>
+      </PriceEstimateProvider>
       <Section id="how-to-pay" title="How paying works" tone="muted">
         <Timeline steps={payHow} />
       </Section>

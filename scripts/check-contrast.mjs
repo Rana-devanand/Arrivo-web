@@ -17,6 +17,9 @@ const pairs = [
   ["nav", "card"],
   ["nav", "muted"],
   ["highlight", "background"],
+  ["success-foreground", "success"],
+  ["warning-foreground", "warning"],
+  ["danger-foreground", "danger"],
 ];
 
 function parseBlock(block) {

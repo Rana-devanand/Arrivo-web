@@ -34,6 +34,11 @@ export function CheckoutResult() {
               Go back to the Arrivo app. Arrivo Plus switches on within a minute. If you still see Arrivo Free, open Profile, then Subscription, and pull down to refresh.
             </p>
             <p className="text-muted-foreground">An invoice is emailed to you by Dodo Payments. You can cancel any time from the app under Manage subscription.</p>
+            <div>
+              <Button href="/account" variant="outline">
+                View your account on the website
+              </Button>
+            </div>
           </>
         )}
       </div>

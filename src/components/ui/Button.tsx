@@ -9,7 +9,7 @@ type ButtonProps = {
   type?: "button" | "submit";
   disabled?: boolean;
   variant?: "primary" | "secondary" | "outline" | "inverse" | "inverseOutline" | "soft";
-  size?: "md" | "sm";
+  size?: "md" | "sm" | "xs";
   /** Adds a round arrow at the end that turns when the button is hovered. */
   arrow?: boolean;
   className?: string;
@@ -37,18 +37,27 @@ const arrowTiles = {
 const sizes = {
   md: "min-h-12 gap-2 py-2.5 text-base",
   sm: "min-h-10 gap-2 py-1.5 text-sm",
+  xs: "min-h-9 gap-1.5 py-1 text-[13px]",
 } as const;
+
+const paddings = {
+  plain: { md: "px-6", sm: "px-4", xs: "px-3.5" },
+  arrow: { md: "pl-6 pr-1.5", sm: "pl-6 pr-1.5", xs: "pl-3.5 pr-1" },
+} as const;
+
+/** The round arrow tile is as tall as the button's text line allows: the smallest button gets a smaller one. */
+const arrowSizes = { md: "size-9", sm: "size-9", xs: "size-6" } as const;
 
 /** Link or button, depending on whether `href` is given. */
 export function Button({ href, onClick, type = "button", disabled = false, variant = "primary", size = "md", arrow = false, className = "", children }: ButtonProps) {
-  const padding = arrow ? "pl-6 pr-1.5" : size === "md" ? "px-6" : "px-4";
+  const padding = paddings[arrow ? "arrow" : "plain"][size];
   const classes = `group/arrow inline-flex items-center justify-center rounded-full font-semibold transition-[opacity,box-shadow] disabled:cursor-not-allowed disabled:opacity-50 ${sizes[size]} ${padding} ${variants[variant]} ${className}`;
   const content = (
     <>
       {children}
       {arrow ? (
-        <span className={`inline-flex size-9 items-center justify-center rounded-full transition-transform duration-300 group-hover/arrow:rotate-45 ${arrowTiles[variant]}`}>
-          <Icon name="arrow" className="size-4 -rotate-45" />
+        <span className={`inline-flex items-center justify-center rounded-full transition-transform duration-300 group-hover/arrow:rotate-45 ${arrowSizes[size]} ${arrowTiles[variant]}`}>
+          <Icon name="arrow" className={`-rotate-45 ${size === "xs" ? "size-3.5" : "size-4"}`} />
         </span>
       ) : null}
     </>
